@@ -115,19 +115,17 @@ class User < ApplicationRecord
     validates :password, length: { within: Devise.password_length }
   end
 
-  validate if: :will_save_change_to_email? do |user|
-    domain = user.organization&.domain_restriction
-    next if domain.blank?
-
-    regexp = build_email_regexp(domain)
-    errors.add(:email, :invalid_domain, domain: domain) unless regexp.match?(user.email)
-  end
+  validate :email_domain_must_be_valid, if: :will_save_change_to_email?
 
   # Checks whether a password is needed or not. For validations only.
   # Passwords are always required if it's a new record, or if the password
   # or confirmation are being set somewhere.
   def password_required?
     !persisted? || !password.nil? || !password_confirmation.nil?
+  end
+
+  def email_domain_must_be_valid
+    errors.add(:email, :invalid_domain, domain: domain) unless valid_email_domain?
   end
 
   # Callbacks
@@ -416,5 +414,19 @@ class User < ApplicationRecord
   # ----------------------------------------------------------------------------
   def self.reset_all_counters
     connection.select_value("SELECT reset_all_users_counters()")
+  end
+
+  # Email domain restriction
+  # ----------------------------------------------------------------------------
+  def restrict_email_domain?
+    organization&.domain_restriction?
+  end
+
+  def valid_email_domain?
+    !restrict_email_domain? || email_domain_restriction_regexp.match?(email)
+  end
+
+  def email_domain_restriction_regexp
+    build_email_regexp(organization.domain_restriction) if restrict_email_domain?
   end
 end
