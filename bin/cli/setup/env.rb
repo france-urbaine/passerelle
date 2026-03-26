@@ -41,18 +41,22 @@ module CLI
 
       def setup_redis_cache
         return if variable_exist?("REDIS_CACHE_URL", ".env.development")
+        return if variable_exist?("USE_MEMORY_CACHING", ".env.development")
 
         say ""
         say "Would you like to set a dedicated Redis database for caching ?"
         say ""
         say "  [1-20]   Another database (redis://localhost:6379/{n})"
-        say "  [Enter]  Use default URL  (redis://localhost:6379/1)"
+        say "  [Enter]  Use memory caching as default"
         say ""
 
         value = ask
-        value = 1 unless (1..20).cover?(value.to_i)
 
-        add_variable "REDIS_CACHE_URL", "redis://localhost:6379/#{value}", ".env.development"
+        if (1..20).cover?(value.to_i)
+          add_variable "REDIS_CACHE_URL", "redis://localhost:6379/#{value}", ".env.development"
+        else
+          add_variable "USE_MEMORY_CACHING", "true", ".env.development"
+        end
       end
 
       def setup_smtp_port
