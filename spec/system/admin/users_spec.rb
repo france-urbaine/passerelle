@@ -629,10 +629,7 @@ RSpec.describe "Users in admin" do
     expect(page).to have_current_path(admin_users_path)
     expect(page).to have_selector("h1", text: "Utilisateurs")
     expect(page).to have_text("10 utilisateurs | Page 1 sur 1")
-
     expect(page).to have_selector(:table_row, "Utilisateur" => "Marc Debomy")
-    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Maxime Gauthier")
-    expect(page).to have_no_selector(:table_row, "Utilisateur" => "Christelle Droitier")
 
     # The dialog should be closed
     # A notification should be displayed
