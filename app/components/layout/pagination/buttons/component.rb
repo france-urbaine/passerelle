@@ -24,7 +24,7 @@ module Layout
         def previous_button
           UI::Button::Component.new(
             "Page précédente",
-            page_url(pagy.prev),
+            page_url(pagy.previous),
             rel:       "prev",
             icon:      "chevron-left",
             icon_only: true,

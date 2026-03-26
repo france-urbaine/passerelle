@@ -51,7 +51,7 @@ module Views
       end
 
       def pagy
-        Pagy.new(count: 12, page: 1, limit: 5)
+        Pagy::Offset.new(count: 12, page: 1, limit: 5)
       end
     end
   end

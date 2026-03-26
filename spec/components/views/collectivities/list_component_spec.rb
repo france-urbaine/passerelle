@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Views::Collectivities::ListComponent, type: :component do
   describe "rendered component" do
     let!(:collectivities) { create_list(:collectivity, 3) }
-    let(:pagy)            { Pagy.new(count: 56, page: 1, limit: 20) }
+    let(:pagy)            { Pagy::Offset.new(count: 56, page: 1, limit: 20) }
 
     before { sign_in_as(:super_admin) }
 
@@ -68,7 +68,7 @@ RSpec.describe Views::Collectivities::ListComponent, type: :component do
 
   describe "links & actions" do
     let!(:collectivities) { create_list(:collectivity, 3) }
-    let(:pagy)            { Pagy.new(count: 3) }
+    let(:pagy)            { Pagy::Offset.new(count: 3) }
 
     context "with admin namespace" do
       before { sign_in_as(:super_admin) }
