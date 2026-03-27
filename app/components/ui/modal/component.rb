@@ -34,7 +34,7 @@ module UI
       def initialize(referrer: nil, **)
         @referrer        = referrer
         @html_attributes = parse_html_attributes(**)
-        super(**)
+        super()
       end
 
       def modal_attributes
