@@ -4,11 +4,10 @@ Rails.application.configure do
   # FYI: We'd better have to use a String instead of a Pathname
   # otherwise it may not be able to eager load the directory
   #
-  config.view_component.preview_paths << Rails.root.join("app/components").to_s
-  config.view_component.preview_paths << Rails.root.join("spec/components/previews").to_s
+  config.view_component.previews.paths << Rails.root.join("app/components").to_s
+  config.view_component.previews.paths << Rails.root.join("spec/components/previews").to_s
 
-  config.view_component.default_preview_layout = "component_preview"
-  config.view_component.capture_compatibility_patch_enabled = true
+  config.view_component.previews.default_layout = "component_preview"
 
   # ViewComponent instrumentation could be very noisy, especially with Lookbook
   # That's why it isn't active by default.
@@ -19,14 +18,6 @@ Rails.application.configure do
   end
 
   config.lookbook.project_name = "Passerelle" if defined?(Lookbook)
-end
-
-# Eager load all components to use component helpers defined by #define_component_helper
-#
-unless Rails.application.config.eager_load
-  Rails.application.config.to_prepare do
-    Rails.autoloaders.main.eager_load_dir(Rails.root.join("app/components"))
-  end
 end
 
 ActiveSupport.on_load(:view_component) do

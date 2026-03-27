@@ -3,8 +3,6 @@
 module UI
   module Card
     class Component < ApplicationViewComponent
-      define_component_helper :card_component
-
       renders_one :header, "ContentSlot"
       renders_one :body, "ContentSlot"
 

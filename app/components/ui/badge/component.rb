@@ -3,8 +3,6 @@
 module UI
   module Badge
     class Component < ApplicationViewComponent
-      define_component_helper :badge_component
-
       SCHEME_CSS_CLASSES = {
         default:   "",
         warning:   "badge--warning",

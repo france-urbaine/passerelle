@@ -11,7 +11,7 @@
   / They should be deleted once the search system has been finalized.
 
   - if @url == reports_path || request.path == reports_path
-    = modal_call_component(hidden: true) do |call|
+    = modal_call_component do |call|
       - call.with_button "Aide à la recherche", icon: "question-mark-circle", icon_only: true
       - call.with_modal do |modal|
         - modal.with_header do

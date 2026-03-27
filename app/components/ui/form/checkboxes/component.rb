@@ -4,8 +4,6 @@ module UI
   module Form
     module Checkboxes
       class Component < ApplicationViewComponent
-        define_component_helper :checkboxes_component
-
         def initialize(object_name, method, collection, value_method: nil, text_method: nil, **options)
           @object_name  = object_name
           @method       = method

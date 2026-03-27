@@ -3,8 +3,6 @@
 module UI
   module Breadcrumbs
     class Component < ApplicationViewComponent
-      define_component_helper :breadcrumbs_component
-
       renders_one :h1, "ContentSlot"
       renders_many :paths, "Path"
       renders_many :actions, "ActionSlot"

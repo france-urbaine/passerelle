@@ -4,8 +4,6 @@ module UI
   module Form
     module ArrayField
       class Component < ApplicationViewComponent
-        define_component_helper :array_field_component
-
         def initialize(object_name, method, values = [], **options)
           @object_name = object_name
           @method      = method

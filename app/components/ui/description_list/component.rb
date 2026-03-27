@@ -3,8 +3,6 @@
 module UI
   module DescriptionList
     class Component < ApplicationViewComponent
-      define_component_helper :description_list_component
-
       renders_many :attributes, lambda { |*args, **options|
         Attribute.new(@record, *args, **options)
       }

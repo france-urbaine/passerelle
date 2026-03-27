@@ -4,8 +4,6 @@ module Views
   module Reports
     module PriorityBadge
       class Component < ApplicationViewComponent
-        define_component_helper :priority_badge
-
         COLORS = {
           low:    "badge--lime",
           medium: "badge--yellow",

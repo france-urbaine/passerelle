@@ -4,8 +4,6 @@ module Layout
   module Pagination
     module Buttons
       class Component < ApplicationViewComponent
-        define_component_helper :pagination_buttons_component
-
         attr_reader :pagy, :turbo_frame
 
         def initialize(pagy, turbo_frame: "_top")

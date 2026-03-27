@@ -4,8 +4,6 @@ module UI
   module Form
     module RadioButtons
       class Component < ApplicationViewComponent
-        define_component_helper :radio_buttons_component
-
         def initialize(object_name, method, collection, value_method: nil, text_method: nil, resettable: false,
                        **options)
           @object_name  = object_name

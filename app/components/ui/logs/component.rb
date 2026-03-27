@@ -3,8 +3,6 @@
 module UI
   module Logs
     class Component < ApplicationViewComponent
-      define_component_helper :logs_component
-
       renders_many :logs, "Log"
 
       DEFAULT_TIME_ZONE   = "UTC"

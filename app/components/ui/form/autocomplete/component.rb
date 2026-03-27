@@ -4,8 +4,6 @@ module UI
   module Form
     module Autocomplete
       class Component < ApplicationViewComponent
-        define_component_helper :autocomplete_component
-
         renders_one :label,        ->(*args, **options) { Label.new(self, *args, **options) }
         renders_one :search_field, ->(*args, **options) { SearchField.new(self, *args, **options) }
         renders_one :hidden_field, ->(*args, **options) { HiddenField.new(self, *args, **options) }

@@ -3,8 +3,6 @@
 module UI
   module Counter
     class Component < ApplicationViewComponent
-      define_component_helper :counter_component
-
       def initialize(count)
         @count = count
         super()

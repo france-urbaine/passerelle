@@ -3,8 +3,6 @@
 module UI
   module Modal
     class Component < ApplicationViewComponent
-      define_component_helper :modal_component
-
       renders_one :header, "ContentSlot"
       renders_one :body, "ContentSlot"
 
@@ -36,7 +34,7 @@ module UI
       def initialize(referrer: nil, **)
         @referrer        = referrer
         @html_attributes = parse_html_attributes(**)
-        super(**)
+        super()
       end
 
       def modal_attributes

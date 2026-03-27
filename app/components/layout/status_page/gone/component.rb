@@ -4,8 +4,6 @@ module Layout
   module StatusPage
     module Gone
       class Component < ApplicationViewComponent
-        define_component_helper :gone_status_page_component
-
         renders_one :breadcrumbs, "BreadcrumbsSlot"
         renders_one :header, "ContentSlot"
         renders_one :body, "ContentSlot"
