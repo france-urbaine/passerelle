@@ -11,7 +11,7 @@ end
 # Core gems
 gem "bootsnap", require: false
 gem "puma", "~> 7.2"
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.1"
 
 # Database
 gem "fx"
@@ -35,6 +35,7 @@ gem "zxcvbn"
 
 # Storage
 gem "aws-sdk-s3", require: false
+gem "image_processing"
 
 # Controllers
 gem "action_policy"
