@@ -19,7 +19,7 @@ module Helpers
       elsif @resource && allowed?
         link
       else
-        html_escape_once(label)
+        ERB::Util.html_escape_once(label)
       end
     end
 
