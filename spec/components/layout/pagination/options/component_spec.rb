@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Layout::Pagination::Options::Component do
   it "renders a dropdown" do
     render_inline described_class.new(
-      Pagy.new(count: 10, page: 1, limit: 20)
+      Pagy::Offset.new(count: 10, page: 1, limit: 20)
     )
 
     expect(page).to have_button("Options d'affichage")
@@ -24,7 +24,7 @@ RSpec.describe Layout::Pagination::Options::Component do
 
   it "renders order options" do
     render_inline described_class.new(
-      Pagy.new(count: 10, page: 1, limit: 20),
+      Pagy::Offset.new(count: 10, page: 1, limit: 20),
       order: { name: "nom", count: "nombre" }
     )
 
@@ -46,7 +46,7 @@ RSpec.describe Layout::Pagination::Options::Component do
   it "renders links with actual params" do
     with_request_url("/test/components?search=foo&order=-name&page=3") do
       render_inline described_class.new(
-        Pagy.new(count: 125, page: 3, limit: 20),
+        Pagy::Offset.new(count: 125, page: 3, limit: 20),
         order: { name: "nom", count: "nombre" }
       )
     end

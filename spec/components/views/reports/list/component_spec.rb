@@ -6,7 +6,7 @@ RSpec.describe Views::Reports::List::Component, type: :component do
   describe "rendered component" do
     let!(:collectivity) { create(:collectivity) }
     let!(:reports)      { create_list(:report, 2, :ready, collectivity:) }
-    let(:pagy)          { Pagy.new(count: 56, page: 1, limit: 20) }
+    let(:pagy)          { Pagy::Offset.new(count: 56, page: 1, limit: 20) }
 
     def form_type_title(report)
       I18n.t(report.form_type, scope: "enum.report_form_type")
@@ -133,7 +133,7 @@ RSpec.describe Views::Reports::List::Component, type: :component do
   end
 
   describe "eager loading resources" do
-    let(:pagy) { Pagy.new(count: 2) }
+    let(:pagy) { Pagy::Offset.new(count: 2) }
 
     before do
       collectivity = create(:collectivity)

@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Views::Users::ListComponent, type: :component do
   describe "rendered component" do
     let!(:users) { create_list(:user, 3) }
-    let(:pagy)   { Pagy.new(count: 56, page: 1, limit: 20) }
+    let(:pagy)   { Pagy::Offset.new(count: 56, page: 1, limit: 20) }
 
     before { sign_in_as(:super_admin) }
 
@@ -55,7 +55,7 @@ RSpec.describe Views::Users::ListComponent, type: :component do
   end
 
   describe "eager loading" do
-    let(:pagy) { Pagy.new(count: 3) }
+    let(:pagy) { Pagy::Offset.new(count: 3) }
 
     before do
       sign_in_as(:super_admin)
@@ -85,7 +85,7 @@ RSpec.describe Views::Users::ListComponent, type: :component do
 
   describe "links & actions" do
     let!(:users) { create_list(:user, 3) }
-    let(:pagy)   { Pagy.new(count: 3) }
+    let(:pagy)   { Pagy::Offset.new(count: 3) }
 
     context "with admin namespace" do
       before { sign_in_as(:super_admin) }

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ControllerCollections
-  include Pagy::Backend
+  include Pagy::Method
   include ControllerParams
 
   NESTED_PAGE_LIMIT = 10
@@ -43,7 +43,17 @@ module ControllerCollections
     if limit
       pagy, relation = pagy(collection, limit:)
     else
-      limit = session[:limit] if session[:limit] && !params.key?(:limit)
+      limit_key = Pagy::OPTIONS[:limit_key] || Pagy::DEFAULT[:limit_key]
+
+      # NOTE: We cannot pass nil as a limit.
+      # Otherwise the value from Pagy::OPTIONS[:limit] is ignored
+      # and Pagy will use Pagy::DEFAULT[:limit] (= 20)
+      # See: https://github.com/ddnexus/pagy/blob/a496a0da51ceb056156762cd9fa5bc5a201e7ef5/gem/lib/pagy/toolbox/paginators/method.rb#L28
+      #
+      limit   = params[limit_key] if params.key?(limit_key)
+      limit ||= session[:limit]   if session[:limit]
+      limit ||= Pagy::OPTIONS[:limit]
+
       pagy, relation = pagy(collection, limit:)
       session[:limit] = pagy.limit unless pagy.limit.zero?
     end

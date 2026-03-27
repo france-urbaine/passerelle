@@ -368,7 +368,10 @@ GEM
       shellany (~> 0.0)
     optimist (3.2.1)
     orm_adapter (0.5.0)
-    pagy (9.3.5)
+    pagy (43.4.3)
+      json
+      uri
+      yaml
     parallel (1.27.0)
     parallel_tests (4.10.1)
       parallel
@@ -640,6 +643,7 @@ GEM
     wisper (2.0.1)
     xpath (3.2.0)
       nokogiri (~> 1.8)
+    yaml (0.4.0)
     yard (0.9.38)
     zeitwerk (2.7.5)
     zxcvbn (1.0.0)
@@ -649,6 +653,7 @@ PLATFORMS
   arm64-darwin-22
   arm64-darwin-23
   arm64-darwin-24
+  arm64-darwin-25
   x86_64-darwin-21
   x86_64-linux
 
