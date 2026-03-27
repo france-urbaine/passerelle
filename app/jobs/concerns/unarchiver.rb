@@ -16,7 +16,7 @@ module Unarchiver
       target.dirname.mkpath
       target.delete if target.exist?
 
-      entry.extract(target.to_s)
+      entry.extract(destination_directory: path.dirname)
     end
 
     target

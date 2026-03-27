@@ -10,7 +10,7 @@ end
 
 # Core gems
 gem "bootsnap", require: false
-gem "puma", "~> 6.0"
+gem "puma", "~> 7.2"
 gem "rails", "~> 8.0.2"
 
 # Database
@@ -20,7 +20,7 @@ gem "redis", "~> 5.0"
 
 # Backend adapters
 gem "activerecord-session_store"
-gem "sidekiq", ">= 7.3", "< 8"
+gem "sidekiq"
 
 # API
 gem "apipie-rails"
