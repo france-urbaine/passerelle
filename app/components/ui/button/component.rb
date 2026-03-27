@@ -3,8 +3,6 @@
 module UI
   module Button
     class Component < ApplicationViewComponent
-      define_component_helper :button_component
-
       def initialize(*args, **kwargs)
         raise ArgumentError, "wrong number of arguments (given #{args.size}, expected 0..2)" if args.size > 2
 

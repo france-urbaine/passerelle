@@ -3,8 +3,6 @@
 module Layout
   module ContentLayout
     class Component < ApplicationViewComponent
-      define_component_helper :content_layout_component
-
       renders_one :breadcrumbs, "BreadcrumbsSlot"
       renders_many :blocks, types: {
         header: {

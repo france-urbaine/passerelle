@@ -3,8 +3,6 @@
 module Layout
   module Datatable
     class SkeletonComponent < ApplicationViewComponent
-      define_component_helper :datatable_skeleton_component
-
       renders_one :search
       renders_one :pagination
 

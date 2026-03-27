@@ -4,8 +4,6 @@ module UI
   module Form
     module HiddenField
       class Component < ApplicationViewComponent
-        define_component_helper :hidden_field_component
-
         def initialize(name, value = nil, **options)
           @name = name
           @value = value

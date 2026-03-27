@@ -3,8 +3,6 @@
 module UI
   module Flash
     class Component < ApplicationViewComponent
-      define_component_helper :flash_component
-
       SCHEME_CSS_CLASSES = {
         default: "",
         warning: "flash--warning",

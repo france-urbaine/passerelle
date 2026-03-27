@@ -3,7 +3,6 @@
 module UI
   module Timeline
     class Component < ApplicationViewComponent
-      define_component_helper :timeline_component
       renders_many :steps, ->(*args, **kwargs) { Step.new(self, *args, **kwargs) }
 
       attr_reader :date_format

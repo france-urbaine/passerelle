@@ -3,8 +3,6 @@
 module UI
   module ModalCall
     class Component < ApplicationViewComponent
-      define_component_helper :modal_call_component
-
       renders_one :button, lambda { |*args, **options, &block|
         options = reverse_merge_attributes(options, {
           data: {

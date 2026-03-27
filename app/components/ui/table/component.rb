@@ -3,8 +3,6 @@
 module UI
   module Table
     class Component < ApplicationViewComponent
-      define_component_helper :table_component
-
       renders_many :columns, "HeadColumn"
 
       attr_reader :data, :rows

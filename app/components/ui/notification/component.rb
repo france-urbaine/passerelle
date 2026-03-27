@@ -3,8 +3,6 @@
 module UI
   module Notification
     class Component < ApplicationViewComponent
-      define_component_helper :notification_component
-
       renders_one :header, "ContentSlot"
       renders_one :body, "ContentSlot"
       renders_many :actions, "ActionSlot"

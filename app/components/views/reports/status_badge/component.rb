@@ -4,8 +4,6 @@ module Views
   module Reports
     module StatusBadge
       class Component < ApplicationViewComponent
-        define_component_helper :report_status_badge
-
         COLORS = {
           collectivity: {
             draft:                  "badge--yellow",

@@ -3,8 +3,6 @@
 module UI
   module Dropdown
     class Component < ApplicationViewComponent
-      define_component_helper :dropdown_component
-
       renders_one :button, lambda { |*args, **options|
         self.button_id = options.delete(:id)
 

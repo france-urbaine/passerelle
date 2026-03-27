@@ -3,8 +3,6 @@
 module UI
   module Datalist
     class Component < ApplicationViewComponent
-      define_component_helper :datalist_component
-
       renders_many :options, "Option"
 
       def initialize(highlight: nil)

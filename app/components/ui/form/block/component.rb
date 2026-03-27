@@ -4,8 +4,6 @@ module UI
   module Form
     module Block
       class Component < ApplicationViewComponent
-        define_component_helper :form_block_component
-
         renders_many :errors
         renders_one  :hint
 

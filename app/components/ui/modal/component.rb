@@ -3,8 +3,6 @@
 module UI
   module Modal
     class Component < ApplicationViewComponent
-      define_component_helper :modal_component
-
       renders_one :header, "ContentSlot"
       renders_one :body, "ContentSlot"
 
