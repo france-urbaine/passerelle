@@ -23,9 +23,6 @@ AllCops:
     - 'vendor/bundle/**/*'
 
 # Capybara -----------------------------------------------------------------------
-Capybara/ClickLinkOrButtonStyle:
-  Enabled: false
-
 Capybara/RSpec/HaveSelector:
   Enabled: false
 
@@ -193,7 +190,7 @@ Style/EmptyClassDefinition:
     - 'StandardError'
 
 Style/FetchEnvVar:
-  AllowedVars:
+  AllowedVariables:
     - BUNDLE_GEMFILE
     - RAILS_ENV
 
