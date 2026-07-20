@@ -10,7 +10,7 @@ end
 
 # Core gems
 gem "bootsnap", require: false
-gem "puma", "~> 7.2"
+gem "puma", "~> 8.0"
 gem "rails", "~> 8.1"
 
 # Database
