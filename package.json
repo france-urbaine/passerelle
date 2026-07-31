@@ -10,7 +10,7 @@
     "esbuild": "^0.27.4",
     "highlight.js": "^11.11.1",
     "hotkeys-js": "^4.0.2",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.18",
     "postcss-cli": "^11.0.1",
     "postcss-nested": "^7.0.2",
     "stimulus-autocomplete": "^3.0.2",
