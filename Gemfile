@@ -16,7 +16,7 @@ gem "rails", "~> 8.1"
 # Database
 gem "fx"
 gem "pg", "~> 1.1"
-gem "redis", "~> 5.0"
+gem "redis", "~> 6.0"
 
 # Backend adapters
 gem "activerecord-session_store"
@@ -36,6 +36,7 @@ gem "zxcvbn"
 # Storage
 gem "aws-sdk-s3", require: false
 gem "image_processing"
+gem "ruby-vips"
 
 # Controllers
 gem "action_policy"
