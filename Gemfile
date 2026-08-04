@@ -36,6 +36,7 @@ gem "zxcvbn"
 # Storage
 gem "aws-sdk-s3", require: false
 gem "image_processing"
+gem "ruby-vips"
 
 # Controllers
 gem "action_policy"

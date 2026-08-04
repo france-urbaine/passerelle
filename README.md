@@ -6,6 +6,7 @@
 * PostgreSQL 14+
 * Redis
 * Yarn
+* Libvips (for image processing)
 
 ## Setup
 
