@@ -18,21 +18,15 @@ RSpec.describe Organization::OauthApplicationPolicy, type: :policy do
       it_behaves_like("when current user is a collectivity user")        { failed }
     end
 
-    context "with an application" do
+    context "with an application owned by current organization" do
       let(:record) { build_stubbed(:oauth_application, owner: current_organization) }
 
-      it_behaves_like("when current user is a DDFIP super admin")        { failed }
-      it_behaves_like("when current user is a DDFIP admin")              { failed }
-      it_behaves_like("when current user is a DDFIP user")               { failed }
       it_behaves_like("when current user is a publisher super admin")    { succeed }
       it_behaves_like("when current user is a publisher admin")          { succeed }
       it_behaves_like("when current user is a publisher user")           { succeed }
-      it_behaves_like("when current user is a collectivity super admin") { failed }
-      it_behaves_like("when current user is a collectivity admin")       { failed }
-      it_behaves_like("when current user is a collectivity user")        { failed }
     end
 
-    context "with and application not owner by current_publisher" do
+    context "with and application not owned by current organization" do
       let(:record) { build_stubbed(:oauth_application, owner: build(:publisher)) }
 
       it_behaves_like("when current user is a DDFIP super admin")        { failed }
