@@ -339,6 +339,11 @@ Rails.application.routes.draw do
     end
   end
 
+  # Static pages
+  # ----------------------------------------------------------------------------
+  get "/conditions-generales-d-utilisation", to: "static_pages#cgu",     as: :cgu
+  get "/protection-des-donnees",             to: "static_pages#privacy", as: :privacy
+
   # Errors pages
   # ----------------------------------------------------------------------------
   get "404", to: "exceptions#not_found"

@@ -32,10 +32,10 @@ html( lang="fr" )
     = render "shared/notifications"
 
     .public__footer
-      / a( disabled ) Conditions d'utilisation
-      / '  |
-      / a( disabled ) Protection des données
-      / '  |
+      = link_to "Conditions d'utilisation", cgu_path
+      '  |
+      = link_to "Protection des données", privacy_path
+      '  |
 
       - if Passerelle::Application::VERSION.present?
         = link_to Passerelle::Application::VERSION, "https://github.com/france-urbaine/passerelle/releases", target: "_blank"
