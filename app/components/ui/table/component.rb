@@ -109,9 +109,9 @@ module UI
         end
 
         def before_render
-          # Create & eager load cells for each column in head
+          # Create cells for each column in head
+          # Cells are rendered only once by the table: components cannot be rendered twice.
           convert_columns_to_cells
-          @cells.each { |cell| render(cell) }
         end
 
         def call
