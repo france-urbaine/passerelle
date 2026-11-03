@@ -32,8 +32,11 @@ module CupriteHelpers
   # Drop #pause anywhere in a test to stop the execution.
   # Useful when you want to checkout the contents of a web page in the middle of a test
   # running in a headful mode.
+  #
+  # NOTE: Cuprite 0.20 removed Driver#pause, so we wait for user input ourselves.
   def pause
-    page.driver.pause
+    $stdout.puts "Test paused: press Enter to continue..."
+    $stdin.gets
   end
 
   # Drop #debug anywhere in a test to open a Chrome inspector and pause the execution

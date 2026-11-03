@@ -52,7 +52,7 @@ RSpec.describe "Reports" do
       # Fill the search form with a simple string criterion
       #
       fill_in "Rechercher", with: "2024-01-0001-00001"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       # Only reports matching the criterion should appear
       #
@@ -64,7 +64,7 @@ RSpec.describe "Reports" do
       # Fill the search form with a hash-like string criteria
       #
       fill_in "Rechercher", with: "paquet:2024-01-0001"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       # Only reports matching the criterion should appear
       #
@@ -76,7 +76,7 @@ RSpec.describe "Reports" do
       # Fill the search form with multiple hash-like string criteria
       #
       fill_in "Rechercher", with: "commune:bayonne type:(local pro)"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       # Only reports matching the criteria should appear
       #
@@ -88,7 +88,7 @@ RSpec.describe "Reports" do
       # Fill the search form with a mix of hash-like criteria and simple string criterion
       #
       fill_in "Rechercher", with: "état:(Signalement rejeté) bayonne"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       # Only reports matching the criteria should appear
       #
@@ -543,7 +543,7 @@ RSpec.describe "Reports" do
       # Fill the search form with a simple string criterion
       #
       fill_in "Rechercher", with: "2024-01-0001-00001"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       # Only reports matching the criterion should appear
       #
@@ -554,7 +554,7 @@ RSpec.describe "Reports" do
       # Fill the search form with a hash-like string criteria
       #
       fill_in "Rechercher", with: "paquet:2024-01-0001"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       # Only reports matching the criterion should appear
       #
@@ -565,7 +565,7 @@ RSpec.describe "Reports" do
       # Fill the search form with multiple hash-like string criteria
       #
       fill_in "Rechercher", with: "commune:bayonne type:(local pro)"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       # Only reports matching the criteria should appear
       #
@@ -576,7 +576,7 @@ RSpec.describe "Reports" do
       # Fill the search form with a mix of hash-like criteria and simple string criterion
       #
       fill_in "Rechercher", with: "état:(Signalement rejeté) bayonne"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       # Only reports matching the criteria should appear
       #
@@ -666,7 +666,7 @@ RSpec.describe "Reports" do
       # Fill the search form
       #
       fill_in "Rechercher", with: "paquet:(#{packages[1].reference}, #{packages[2].reference})"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       expect(page).to have_text("12 signalements | Page 1 sur 1")
       expect(page).to have_selector(:table_row, { "État" => "Nouveau signalement" }, count: 6)
@@ -904,7 +904,7 @@ RSpec.describe "Reports" do
       # Fill the search form
       #
       fill_in "Rechercher", with: "paquet:(#{packages[1].reference}, #{packages[2].reference})"
-      find("input[type=search]").send_keys :enter
+      find_field(type: "search").send_keys :enter
 
       expect(page).to have_text("12 signalements | Page 1 sur 1")
       expect(page).to have_selector(:table_row, { "État" => "Nouveau signalement" }, count: 6)

@@ -3,9 +3,6 @@
 require "rails_helper"
 
 RSpec.describe UI::Form::HiddenField::Component do
-  # Disable Capybara/RSpec/SpecificMatcher to match exact HTML output
-  # rubocop:disable Capybara/RSpec/SpecificMatcher
-  #
   it "renders an hidden field with a String value" do
     render_inline described_class.new(:hello, "World")
 
@@ -37,6 +34,4 @@ RSpec.describe UI::Form::HiddenField::Component do
 
     expect(page).to have_no_selector("input[type='hidden']", visible: :hidden)
   end
-  #
-  # rubocop:enable Capybara/RSpec/SpecificMatcher
 end
