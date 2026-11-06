@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-ruby "3.4.4"
+ruby "4.0.9"
 source "https://rubygems.org"
 
 git_source(:github) do |repo_name|
