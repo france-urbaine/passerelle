@@ -15,6 +15,11 @@ module CLI
       #
       ENV_FILE = ".docker/docker-compose.dev.env"
 
+      # Optional, untracked, developer-specific overrides for docker-compose
+      # variable substitution (e.g. PORT).
+      #
+      LOCAL_ENV_FILE = ".docker/docker-compose.local.env"
+
       private
 
       def ensure_docker_installed
@@ -26,14 +31,15 @@ module CLI
       end
 
       # Tells `docker compose` which compose file makes up the project and
-      # which env-file feeds its variable substitution.
+      # which env-files feed its variable substitution.
       #
       # Env-files are only included when present: `docker compose --env-file`
       # hard-fails on a missing file.
       #
       def compose
         command  = ["docker compose", "--file docker-compose.dev.yml"]
-        command << "--env-file #{ENV_FILE}" if File.exist?(ENV_FILE)
+        command << "--env-file #{LOCAL_ENV_FILE}" if File.exist?(LOCAL_ENV_FILE)
+        command << "--env-file #{ENV_FILE}"       if File.exist?(ENV_FILE)
         command.join(" ")
       end
     end

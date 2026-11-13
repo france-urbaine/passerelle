@@ -17,6 +17,7 @@ module CLI
         create_docker_folder
         create_bashrc_local
         create_irbrc_local
+        create_docker_compose_local_env
 
         say "Building Docker image #{IMAGE_NAME}"
         run "docker build --file Dockerfile.dev --tag #{IMAGE_NAME} ."
@@ -107,6 +108,30 @@ module CLI
           IRB.conf[:SAVE_HISTORY] = 100_000
           IRB.conf[:HISTORY_FILE] = ENV["IRB_HISTORY_FILE"]
         RUBY
+      end
+
+      def create_docker_compose_local_env
+        path = ROOT_PATH.join(LOCAL_ENV_FILE)
+        return if path.exist?
+
+        say "Creating #{LOCAL_ENV_FILE}. You can set optional per-developer docker-compose variables inside"
+
+        path.write <<~ENV
+          # Optional, untracked overrides for docker-compose.dev.yml variable substitution.
+          # Generated once by `bin/dx build`: future calls won't overwrite it, so edit freely.
+          # Restart your containers with `bin/dx restart` to apply changes.
+
+          # PORT: host port the Rails server is published on (container-side is always 3000,
+          # see docker-compose.dev.yml). Override it to avoid a clash with another local
+          # service, or to run several projects side by side.
+          # PG_PORT, REDIS_PORT and MAILCATCHER_PORT work the same way, for their
+          # respective services.
+          #
+          # PORT=3001
+          # PG_PORT=5433
+          # REDIS_PORT=6380
+          # MAILCATCHER_PORT=1081
+        ENV
       end
 
       def save_variables(relative_path, variables)
