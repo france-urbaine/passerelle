@@ -161,7 +161,12 @@ module CLI
         Pathname.new(__dir__).join("../../../", file)
       end
 
+      # Variables already provided by the environment (e.g. by docker-compose)
+      # take precedence over .env files: no need to ask for them.
+      #
       def variable_exist?(variable, file)
+        return true if ENV[variable] && !ENV[variable].empty?
+
         path = file(file)
         return false unless path.exist?
 
