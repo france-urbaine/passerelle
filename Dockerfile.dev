@@ -1,0 +1,106 @@
+# Docker "Official Image" of Ruby
+# See: https://hub.docker.com/_/ruby/
+#
+# This base image uses debian:bookworm (aka 12.x)
+#
+FROM docker.io/library/ruby:4.0.9-bookworm
+
+# Retrieve new lists of packages
+#
+RUN apt-get update --quiet --yes
+
+# Install dependencies
+#
+#   - build-essential is needed to install Ruby C extensions
+#   - curl is needed to install dependencies from other repositories
+#     (NodeJS, Postgresql Client)
+#
+RUN apt-get install --quiet --yes build-essential
+RUN apt-get install --quiet --yes curl
+
+# libvips42 is the runtime lib ruby-vips/image_processing load via FFI (no
+# -dev headers or CLI tools needed: there's no C extension to compile).
+# Used by ActiveStorage variants.
+#
+RUN apt-get install --quiet --yes libvips42
+
+# Install PostgreSQL 18 client tools (pg_dump, psql, ...)
+# matching the version used by the postgres service in docker-compose.dev.yml
+# Source: https://www.postgresql.org/download/linux/debian/
+#
+# pg_dump is used by Rails to dump db/structure.sql: newer versions add
+# settings (such as `transaction_timeout`) unknown to older servers.
+#
+RUN curl --fail --silent --show-error --location https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor --output /usr/share/keyrings/postgresql.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update --quiet --yes && \
+    apt-get install --quiet --yes postgresql-client-18
+
+# Install NodeJS
+# Source: https://github.com/nodesource/distributions#using-debian-as-root-nodejs-22
+#
+RUN curl --fail --silent --show-error --location https://deb.nodesource.com/setup_22.x --output nodesource_setup.sh && \
+    bash nodesource_setup.sh && \
+    apt-get install --quiet --yes nodejs
+
+# Install Yarn Classic (yarn.lock still uses the v1 format)
+# Source: https://classic.yarnpkg.com/en/docs/install
+#
+RUN npm install --yes --global yarn
+
+# Install Chromium to run system specs with Ferrum/Cuprite.
+#
+RUN apt-get install --quiet --yes chromium
+
+# Upgrade rubygem
+#
+RUN gem update --system
+
+# Install Foreman to run `bin/dev`
+#
+RUN gem install foreman
+
+# Install mailcatcher
+# Source: https://github.com/sj26/mailcatcher
+#
+# Set env var SMTP_PORT to configure Rails action_mailer.smtp_settings
+# Expose the port 1080 to access to GUI
+#
+RUN gem install mailcatcher --no-document
+ENV SMTP_PORT=1025
+EXPOSE 1080
+
+# Source code will be available here
+#
+WORKDIR /root/passerelle
+
+# Copy Gemfiles to install gems
+# This step allows to cache most of the gems and avoid a full bundle install
+# when updating the app container in docker-compose.dev.yml
+#
+COPY Gemfile Gemfile.lock ./
+
+# Cache Bundler's downloaded .gem files (BuildKit cache mount) across builds.
+# Without this, any Gemfile.lock change invalidates the COPY layer above and
+# every gem gets re-downloaded from scratch.
+#
+RUN --mount=type=cache,target=/usr/local/bundle/cache,sharing=locked \
+    bundle install --jobs "$(nproc)"
+
+RUN rm -rf Gemfile Gemfile.lock
+
+# Inform Ferrum that it is ran inside a container,
+# so it uses proper flags such as --no-sandbox.
+#
+# The alternative would be to setup a non-root user.
+# See https://github.com/rubycdp/ferrum/blob/main/lib/ferrum/browser/options/chrome.rb
+#
+ENV FERRUM_CHROME_DOCKERIZE=true
+
+# Expose the port used by the Rails app
+#
+EXPOSE 3000
+
+# Stay busy when we start so we can run commands
+#
+CMD ["sleep", "infinity"]

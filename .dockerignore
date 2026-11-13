@@ -1,0 +1,14 @@
+# Keeps the build context small: Dockerfile.dev only copies the Gemfiles,
+# the source code is bind-mounted by docker-compose.dev.yml.
+#
+# Excluding these paths speeds up `docker build` and avoids busting layer
+# cache on unrelated local changes.
+
+.git
+coverage
+log
+node_modules
+storage
+tmp
+public/assets
+app/assets/builds
