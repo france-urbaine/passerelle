@@ -1,0 +1,31 @@
+name: passerelle
+
+services:
+  app:
+    # Image build from Dockerfile.dev
+    # Use the CLI `bin/dx build --help` for more information
+    #
+    image: ${IMAGE_NAME:-passerelle:ruby-4.0}
+    init:  true
+    volumes:
+      - type: bind
+        source: "."
+        target: "/root/passerelle"
+
+      - history:/root/.history
+      - node_modules:/root/passerelle/node_modules
+
+    ports:
+      - "${PORT:-3000}:3000"
+      - "${MAILCATCHER_PORT:-1080}:1080"
+
+    environment:
+      TZ:               Europe/Paris
+      DOCKER:           true
+      HISTFILE:         /root/.history/.bash_history
+      IRB_HISTORY_FILE: /root/.history/.irb_history
+      PSQL_HISTORY:     /root/.history/.psql_history
+
+volumes:
+  history:
+  node_modules:
