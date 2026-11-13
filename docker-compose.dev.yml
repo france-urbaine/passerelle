@@ -26,6 +26,47 @@ services:
       IRB_HISTORY_FILE: /root/.history/.irb_history
       PSQL_HISTORY:     /root/.history/.psql_history
 
+      POSTGRESQL_HOST:     postgres
+      POSTGRESQL_USER:     postgres
+      POSTGRESQL_PASSWORD: postgres
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    # Docker "Official Image" of PostgreSQL
+    # See https://hub.docker.com/_/postgres/
+    #
+    # Keep the major version in sync with postgresql-client in Dockerfile.dev
+    #
+    image:   postgres:18
+    restart: always
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - history:/root/.history
+
+    ports:
+      - "${PG_PORT:-5432}:5432"
+
+    environment:
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres
+
+      # `docker compose exec` runs as root (HOME=/root) in this image, not as
+      # the `postgres` user: psql history needs its own volume mount.
+      PSQL_HISTORY:      /root/.history/.psql_history
+
+    healthcheck:
+      test:     ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout:  5s
+      retries:  5
+
 volumes:
   history:
   node_modules:
+
+  postgres_data:
+    name: "${COMPOSE_PROJECT_NAME:-passerelle}-postgres"
