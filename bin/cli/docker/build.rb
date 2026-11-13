@@ -15,6 +15,8 @@ module CLI
         ensure_docker_installed
 
         create_docker_folder
+        create_bashrc_local
+        create_irbrc_local
 
         say "Building Docker image #{IMAGE_NAME}"
         run "docker build --file Dockerfile.dev --tag #{IMAGE_NAME} ."
@@ -58,6 +60,53 @@ module CLI
 
       def create_docker_folder
         DOCKER_PATH.mkpath unless DOCKER_PATH.exist?
+      end
+
+      def create_bashrc_local
+        path = DOCKER_PATH.join(".bashrc.local")
+        return if path.exist?
+
+        say "Creating .docker/.bashrc.local. You can place custom Bash configuration inside"
+
+        path.write <<~BASH
+          # Place custom Bash configuration to use inside the running container here.
+          # Then rebuild the image with `bin/dx build` to copy the file in your container.
+          # Finally, restart your containers with `bin/dx restart`
+        BASH
+      end
+
+      def create_irbrc_local
+        path = DOCKER_PATH.join(".irbrc")
+        return if path.exist?
+
+        say "Creating .docker/.irbrc. You can place custom IRB configuration inside"
+
+        path.write <<~RUBY
+          # Place custom IRB configuration to use inside the running container here.
+          # Then rebuild the image with `bin/dx build` to copy the file in your container.
+          # Finally, restart your containers with `bin/dx restart`
+
+          env = ENV.fetch("DOTENV", Rails.env)
+          env = case env
+                when /dev/  then IRB::Color.colorize(env, [:BLUE])
+                when /test/ then IRB::Color.colorize(env, [:BLUE])
+                when /prod/ then IRB::Color.colorize(env, [:RED])
+                else env
+                end
+
+          prompt_prefix = "%N(\#{env})"
+
+          IRB.conf[:PROMPT][:CUSTOM] = {
+            PROMPT_I: "\#{prompt_prefix}> ",
+            PROMPT_S: "\#{prompt_prefix}%l ",
+            PROMPT_C: "\#{prompt_prefix}* ",
+            RETURN: "=> %s\\n"
+          }
+
+          IRB.conf[:PROMPT_MODE] = :CUSTOM
+          IRB.conf[:SAVE_HISTORY] = 100_000
+          IRB.conf[:HISTORY_FILE] = ENV["IRB_HISTORY_FILE"]
+        RUBY
       end
 
       def save_variables(relative_path, variables)

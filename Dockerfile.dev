@@ -101,6 +101,18 @@ ENV FERRUM_CHROME_DOCKERIZE=true
 #
 EXPOSE 3000
 
+# Copy developer-specific Bash configuration into the image
+# and modify the existing /root/.bashrc to source the customizations
+#
+COPY .docker/.bashrc.local /root/.bashrc.local
+RUN echo "" >> ~/.bashrc && \
+    echo "# Dev-specific Bash customizations" >> ~/.bashrc && \
+    echo ". /root/.bashrc.local" >> ~/.bashrc
+
+# Same for IRBrc
+#
+COPY .docker/.irbrc /root/.irbrc
+
 # Stay busy when we start so we can run commands
 #
 CMD ["sleep", "infinity"]
