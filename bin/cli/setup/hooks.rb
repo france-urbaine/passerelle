@@ -7,15 +7,21 @@ module CLI
   class Setup
     class Hooks < Base
       def call
-        setup_hook "post-merge"
-        setup_hook "post-checkout"
+        # Hooks are triggered by git on the host: when they are set up from
+        # inside the container (ENV["DOCKER"] is set by docker-compose.dev.yml),
+        # they need `bin/dx` to reach the container.
+        #
+        update_command = ENV["DOCKER"] ? "bin/dx update" : "bin/update"
+
+        setup_hook "post-merge", update_command
+        setup_hook "post-checkout", update_command
 
         say "✓ Git hooks set up !"
         say ""
       end
 
-      def setup_hook(hook)
-        template = Pathname.new(__dir__).join("hooks", hook).read
+      def setup_hook(hook, update_command)
+        template = format(Pathname.new(__dir__).join("hooks", hook).read, update_command:)
         path     = Pathname.new(".git/hooks").join(hook)
 
         if path.exist?
