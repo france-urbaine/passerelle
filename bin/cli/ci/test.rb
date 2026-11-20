@@ -10,13 +10,6 @@ module CLI
         run "rm -rf coverage/.resultset.json"
         say ""
 
-        if parallel_mode == "flatware"
-          say "Clear flatware processes & sink"
-          run "flatware clear"
-          run "rm -f flatware-sink"
-          say ""
-        end
-
         if args.empty?
           run_tests(:unit)
           run_tests(:system)
@@ -78,7 +71,7 @@ module CLI
       def build_env(scope, only_failures: false)
         env = {}
 
-        env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel_mode && parallel_mode != "flatware"
+        env["PARALLEL_TEST_FIRST_IS_1"] = "true" if parallel_mode
         env["RSPEC_IGNORE_FOCUS"]       = "true"
         env["CI_LESS_OUTPUT"]           = "true" unless ENV.key?("CI_LESS_OUTPUT")
 
@@ -108,24 +101,7 @@ module CLI
 
         @parallel_mode = nil if node_total == 1
 
-        if parallel_mode == "turbo_tests" && !only_failures
-          command  = "bundle exec turbo_tests"
-          command += " -n #{node_total}" if node_total
-          command += " -r fuubar -f Fuubar"
-          command += " --"                            if node_index || scope
-          command += " --only-group #{node_index}"    if node_index
-          command += " --exclude-pattern spec/system" if scope == "unit"
-          command += " --pattern spec/system"         if scope == "system"
-
-        elsif parallel_mode == "flatware"
-          command  = "bundle exec flatware rspec"
-          command += " -w #{node_total}"                                                  if node_total
-          warn "CI_NODE_INDEX is ignored when using flatware for parallel testing"        if node_index
-          command += " --exclude-pattern 'system/**/*_spec.rb'"                           if scope == "unit"
-          command += " --pattern 'system/**/*_spec.rb'"                                   if scope == "system"
-          command += " --only-failures"                                                   if only_failures
-
-        elsif parallel_mode && !only_failures
+        if parallel_mode && !only_failures
           command  = "bundle exec parallel_rspec"
           command += " -n #{node_total}"                                                  if node_total
           command += " --only-group #{node_index}"                                        if node_index
@@ -154,13 +130,17 @@ module CLI
         return @parallel_mode if defined?(@parallel_mode)
 
         load_dotenv
-        parallel = ENV.fetch("CI_PARALLEL", nil)
-        parallel = nil  if parallel == "false"
 
-        # Do not use flatware or turbo_tests in CI mode.
-        parallel = true if parallel && ENV["CI"] == "true"
+        runner =
+          case ENV.fetch("CI_PARALLEL", nil)
+          when "true", "parallel_rspec" then "parallel_rspec"
+          when "false", nil             then nil
+          else
+            warn "CI_PARALLEL=#{ENV['CI_PARALLEL'].inspect} is not supported and ignored"
+            nil
+          end
 
-        @parallel_mode = parallel
+        @parallel_mode = runner
       end
 
       def determine_number_of_parallel_processes(scope)
