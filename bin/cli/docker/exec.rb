@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "command"
+require_relative "../base"
+require_relative "defaults"
 
 module CLI
-  class Docker
-    class Exec < Command
+  module Docker
+    class Exec < Base
       def call(*)
         args, options = parse_options!(*, with: options_parser)
-        ensure_docker_installed
+        CLI::Docker.ensure_docker_installed
+
+        command_options = CLI::Docker.compose_command_options
 
         command = args.join(" ")
         service = options.fetch(:service, "app")
@@ -19,7 +22,7 @@ module CLI
         exec_options += " --env RAILS_ENV=#{options[:rails_env]}"             if options[:rails_env]
 
         say "Execute \"#{command}\" inside container with service named \"#{service}\""
-        run "#{compose} exec#{exec_options} #{service} #{command}"
+        run "docker compose #{command_options.join(' ')} exec#{exec_options} #{service} #{command}"
         say "Execution complete"
       end
 
@@ -45,7 +48,7 @@ module CLI
           Example:
 
               bin/dx exec bash                    Log in to the app service
-              bin/dx exec bin/setup               Setup the project in the app service
+              bin/dx exec bin/setup project       Setup the project in the app service
               bin/dx exec -s redis redis-cli      Run Redis CLI
               bin/dx exec -s postgres psql        Run PSQL from Postgres service
               bin/dx exec -d production rails c   Start a Rails console using .env.production
