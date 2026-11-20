@@ -7,6 +7,23 @@ module CLI
   class Base
     include LinesCommander
 
+    # `bin/dx <name>` shortcuts that CLI::Base#bin_prefix can suggest instead of the
+    # fully spelled out `bin/dx exec bin/<name>` — see CLI::Docker::Default#call for the
+    # shortcuts themselves. Keyed on the exact string #bin_prefix builds before checking
+    # for a shortcut, i.e. "bin/dx exec bin/<name>" (or "bin/dx exec bin/<name> <extra>"
+    # for a two-word shortcut like `dev server`).
+    #
+    KNOWN_SHORTCUTS = {
+      "bin/dx exec bin/rails"      => "bin/dx rails",
+      "bin/dx exec bin/setup"      => "bin/dx setup",
+      "bin/dx exec bin/ci"         => "bin/dx ci",
+      "bin/dx exec bin/update"     => "bin/dx update",
+      "bin/dx exec bin/upgrade"    => "bin/dx upgrade",
+      "bin/dx exec bin/dev server" => "bin/dx dev server",
+      "bin/dx exec bin/dev jobs"   => "bin/dx dev jobs",
+      "bin/dx exec bin/dev"        => "bin/dx dev"
+    }.freeze
+
     def self.run
       call(*ARGV)
     end
@@ -102,6 +119,45 @@ module CLI
 
     def inside_docker_container?
       !!ENV["DOCKER"]
+    end
+
+    # ENV["DX_EXEC"] is set by `bin/dx exec` (CLI::Docker::Exec) whenever it hands a
+    # command off to run inside a container — except `bin/dx exec bash` (`bin/dx sh`),
+    # which opens an interactive shell a human sits in, so anything typed there afterward
+    # should see itself as "already inside", not "launched from the host". Unlike
+    # ENV["DOCKER"] (true for ANY process inside the container — see CLI::Setup::Hooks for
+    # why it answers a different question), this is empty both when already inside an
+    # interactive shell and when running directly on the host with no Docker at all — both
+    # cases where the bare command is already correct.
+    #
+    def dx_exec_prefix
+      ENV["DX_EXEC"] ? "bin/dx exec " : ""
+    end
+
+    # Builds what a human should type to run `bin/<command>` from wherever this is
+    # printed: bare `bin/<command>` when already correct as-is (no DX_EXEC — see
+    # #dx_exec_prefix), `bin/dx <command>` when KNOWN_SHORTCUTS has a shorter form for
+    # it, or the fully spelled out `bin/dx exec bin/<command>` otherwise (e.g.
+    # `bin/rake`, which has no shortcut).
+    #
+    # `command` must be the bare name (e.g. "ci") — bin_prefix always builds the
+    # "bin/<command>" form itself, so passing "bin/ci" would double it up.
+    #
+    def bin_prefix(command = nil)
+      return "#{dx_exec_prefix}bin/#{command}" if command.nil?
+
+      command = command.delete_prefix("bin/")
+      command = "#{dx_exec_prefix}bin/#{command}"
+
+      replace_command_by_shortcut(command)
+    end
+
+    def replace_command_by_shortcut(command)
+      KNOWN_SHORTCUTS.each do |a, b|
+        return command.sub(/\A#{a}/, b) if command.start_with?(a)
+      end
+
+      command
     end
   end
 end
