@@ -3,20 +3,15 @@
 require_relative "../base"
 
 module CLI
-  class Upgrade
+  module Upgrade
     class Yarn < Base
-      def call
+      def call(*)
+        parse_options!(*, arguments_expected: false)
+
         say "Upgrading JS dependencies"
         run "yarn upgrade-interactive --latest"
 
-        return unless yarn_lock_changed?
-
-        say ""
-        if package_changed?
-          say "package.json & yarn.lock have changed."
-        else
-          say "yarn.lock has changed."
-        end
+        return if changed_files.empty?
 
         say ""
         say "Updating assets"
@@ -25,30 +20,52 @@ module CLI
         say ""
         say "Would you like to run the system specs ? [Yn]"
         run_system_specs_until_passed_or_discarded if ask == "Y"
+
+        say ""
+        say "Changed files:"
+        say ""
+        changed_files.each do |file|
+          say "  #{colorize(file, :RED)}"
+        end
+
         say ""
 
-        if package_changed?
-          say "Would you like to see changes on package.json ? [Yn]"
-          run "git diff package.json" if ask == "Y"
-
+        if inside_docker_container?
+          say "To commit changes, run this command from your host:"
           say ""
-          say "Would you like to commit changes on yarn.lock & package.json ? [Yn]"
-          run "git commit -m \"Update JS dependencies\" -- package.json yarn.lock" if ask == "Y"
-
+          say "    #{colorize(commit_command, :YELLOW)}"
+          say ""
         else
-          say "Would you like to commit changes on yarn.lock ? [Yn]"
-          run "git commit -m \"Update JS dependencies\" -- yarn.lock" if ask == "Y"
+          say "Would you like to commit changes? [Yn]"
+          run commit_command if ask == "Y"
         end
+      end
+
+      def help
+        say <<~HEREDOC
+          Usage:
+
+              #{bin_prefix('upgrade')} yarn
+
+          Upgrade JS packages through an interactive command.
+          Then, it suggests to commit the changes.
+          \x5
+        HEREDOC
       end
 
       protected
 
-      def yarn_lock_changed?
-        !run("git diff --quiet yarn.lock", abort_on_failure: false)
+      def changed_files
+        @changed_files ||= %w[
+          package.json
+          yarn.lock
+        ].reject do |file|
+          system("git", "diff", "--quiet", file)
+        end
       end
 
-      def package_changed?
-        !run("git diff --quiet package.json", abort_on_failure: false)
+      def commit_command
+        "git commit -m \"Upgrade JS dependencies\" -- #{changed_files.join(' ')}"
       end
 
       def run_system_specs_until_passed_or_discarded
