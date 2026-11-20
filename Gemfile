@@ -106,6 +106,10 @@ group :development do
   gem "rack-mini-profiler"
   gem "web-console"
 
+  # AI coding agents tooling (MCP server mounted at /_hyperdrive/mcp)
+  gem "layered-rails-skills"
+  gem "rails-hyperdrive"
+
   # Linting
   gem "rubocop",             require: false
   gem "rubocop-capybara",    require: false

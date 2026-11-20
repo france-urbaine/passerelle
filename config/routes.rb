@@ -3,6 +3,11 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+  # Development tools
+  # ----------------------------------------------------------------------------
+  # MCP server for AI coding agents (see .mcp.json)
+  mount Rails::Hyperdrive::Engine => "/_hyperdrive" if Rails.env.development?
+
   # Concerns
   # ----------------------------------------------------------------------------
   concern :removable do |options|
