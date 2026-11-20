@@ -29,7 +29,7 @@ module CLI
           return if run(command, env: env, abort_on_failure: false)
 
           say "Cleanup database before retrying failed specs"
-          run "bin/setup test #{parallel_mode ? 'parallel' : 'rspec'}"
+          run "bin/setup test #{parallel_mode ? '--parallel' : '--rspec'}"
         end
 
         say "Retry only failed specs"
