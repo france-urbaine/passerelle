@@ -20,7 +20,7 @@ $ bin/dx start --setup    # Start containers & setup the project for the first t
 To get more options about setup steps, you can try:
 
 ```shell
-$ bin/dx setup help
+$ bin/dx setup --help
 ```
 
 Default ports (3000, 1080, 5432 & 6379) may clash with other local services.
@@ -37,7 +37,7 @@ $ bin/dx dev
 To get more options about running processes, you can try:
 
 ```shell
-$ bin/dx dev help
+$ bin/dx dev --help
 ```
 
 ## Tests and continuous integration
@@ -51,7 +51,7 @@ $ bin/dx ci
 To get more options about how to run tests and CI, run:
 
 ```shell
-$ bin/dx ci help
+$ bin/dx ci --help
 ```
 
 ## Managing containers
@@ -67,7 +67,7 @@ $ bin/dx exec [command]   # Run any command in the app container
 To get the full list of commands, you can try:
 
 ```shell
-$ bin/dx help
+$ bin/dx --help
 ```
 
 ## Additional configuration
