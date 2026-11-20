@@ -1,21 +1,24 @@
 # frozen_string_literal: true
 
-require_relative "command"
+require_relative "../base"
+require_relative "defaults"
 
 module CLI
-  class Docker
-    class Restart < Command
+  module Docker
+    class Restart < Base
       def call(*)
         options = parse_options!(*, with: options_parser, arguments_expected: false)
-        ensure_docker_installed
+        CLI::Docker.ensure_docker_installed
+
+        command_options = CLI::Docker.compose_command_options
 
         say "Stopping development environment"
-        run "#{compose} stop"
+        run "docker compose #{command_options.join(' ')} stop"
 
         say "Starting development environment"
-        run "#{compose} up --detach"
+        run "docker compose #{command_options.join(' ')} up --detach"
 
-        run "#{compose} exec app bin/update" if options[:update]
+        run "docker compose #{command_options.join(' ')} exec app bin/update" if options[:update]
 
         say "Development environment started"
       end
