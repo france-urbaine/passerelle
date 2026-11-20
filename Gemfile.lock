@@ -275,7 +275,6 @@ GEM
       rubocop (< 2.0)
     hashdiff (1.2.2)
     htmlbeautifier (1.4.3)
-    htmlentities (4.4.2)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
     image_processing (2.2.0)
@@ -388,10 +387,9 @@ GEM
     pg (1.7.0-x86_64-linux)
     pp (0.6.4)
       prettyprint
-    premailer (1.32.0)
+    premailer (1.33.0)
       addressable
-      css_parser (>= 1.19.0)
-      htmlentities (>= 4.0.0)
+      css_parser (>= 3.1.0)
     premailer-rails (1.12.0)
       actionmailer (>= 3)
       net-smtp

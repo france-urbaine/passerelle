@@ -74,7 +74,7 @@ module Matchers
       private
 
       def mail_body(email)
-        HTMLEntities.new.decode(email.html_part.decoded)
+        email.html_part.decoded
       end
     end
 
