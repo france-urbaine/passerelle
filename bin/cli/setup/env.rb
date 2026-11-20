@@ -2,77 +2,49 @@
 
 require_relative "../base"
 require "pathname"
-require "dotenv"
 
 module CLI
-  class Setup
+  module Setup
     class Env < Base
-      def call
-        say "Check for some basic environnement variables"
+      def call(*)
+        options    = parse_options!(*, with: options_parser, arguments_expected: false)
+        production = options.fetch(:production, false)
 
-        setup_redis_sidekiq
-        setup_redis_cache
-        setup_smtp_port
-        setup_ci_parallel
-        setup_webdriver
-        setup_super_diff
-        setup_production
+        require "dotenv"
+
+        if production
+          setup_production
+        else
+          say "Check for some basic environnement variables"
+          setup_ci_parallel
+          setup_super_diff
+        end
 
         say ""
         say "✓ All environnement variables are ready !"
         say ""
       end
 
-      def setup_redis_sidekiq
-        return if variable_exist?("REDIS_SIDEKIQ_URL", ".env.development")
+      def help
+        say <<~HEREDOC
+          Usage:
 
-        say ""
-        say "Would you like to set a dedicated Redis database for Sidekiq ?"
-        say ""
-        say "  [1-20]   Another database (redis://localhost:6379/{n})"
-        say "  [Enter]  Use default URL  (redis://localhost:6379/0)"
-        say ""
+              #{bin_prefix('setup')} env [OPTIONS]
 
-        value = ask
-        value = 0 unless (1..20).cover?(value.to_i)
+          Check if usefull environment variables have been defined in .env files.
+          Prompt user about missing ones.
 
-        add_variable "REDIS_SIDEKIQ_URL", "redis://localhost:6379/#{value}", ".env.development"
+          Options:
+
+              --[no-]production    Check for production variables. Excluded by default.
+          \x5
+        HEREDOC
       end
 
-      def setup_redis_cache
-        return if variable_exist?("REDIS_CACHE_URL", ".env.development")
-        return if variable_exist?("USE_MEMORY_CACHING", ".env.development")
-
-        say ""
-        say "Would you like to set a dedicated Redis database for caching ?"
-        say ""
-        say "  [1-20]   Another database (redis://localhost:6379/{n})"
-        say "  [Enter]  Use memory caching as default"
-        say ""
-
-        value = ask
-
-        if (1..20).cover?(value.to_i)
-          add_variable "REDIS_CACHE_URL", "redis://localhost:6379/#{value}", ".env.development"
-        else
-          add_variable "USE_MEMORY_CACHING", "true", ".env.development"
+      def options_parser
+        OptionParser.new do |parser|
+          parser.on("--[no-]production")
         end
-      end
-
-      def setup_smtp_port
-        return if variable_exist?("SMTP_PORT", ".env.development")
-
-        say ""
-        say "Would you like to set a custom port to use with MailCacther ?"
-        say ""
-        say "  [any integer] Use custom port"
-        say "  [nothing]     Use default port (1025)"
-        say ""
-
-        value = ask
-        value = 1025 if value.empty?
-
-        add_variable "SMTP_PORT", value, ".env.development"
       end
 
       def setup_ci_parallel
@@ -90,25 +62,6 @@ module CLI
         end
       end
 
-      def setup_webdriver
-        return if variable_exist?("WEBDRIVER", ".env.test")
-
-        say ""
-        say "Would you like to use Chrome (or Chromium) to run system tests ? [Yn]"
-
-        if ask == "Y"
-          add_variable "WEBDRIVER", "cuprite", ".env.test"
-        else
-          say "Please enter your preferred webdriver:"
-          say "  example: firefox_headless"
-
-          webdriver = ask_variable("WEBDRIVER")
-
-          say ""
-          add_variable "WEBDRIVER", webdriver, ".env.test"
-        end
-      end
-
       def setup_super_diff
         return if variable_exist?("SUPER_DIFF", ".env.test")
 
@@ -119,15 +72,24 @@ module CLI
       end
 
       def setup_production
-        return if file_exist?(".env.production")
+        if file_exist?(".env.production")
+          say "The file #{colorize('.env.production', :YELLOW, :BOLD)} already exist."
+          say "Would you like to delete it to continue ? [Yn]"
+          exit if ask != "Y"
+
+          run "rm .env.production"
+        end
+
+        run "touch .env.production"
 
         say ""
-        say "Would you like to set up a production environnement ? [Yn]"
+        say "The file #{colorize('.env.production', :YELLOW, :BOLD)} has been created."
+        say "If you interrupt this process, it will not prompt you anymore."
+        say "You may first delete the file to use the prompt again."
+        say ""
 
-        if ask != "Y"
-          run "touch .env.production"
-          return
-        end
+        say "Configure access to Postgres."
+        say ""
 
         pg_host       = ask_variable("POSTGRESQL_HOST")
         pg_port       = ask_variable("POSTGRESQL_PORT")
@@ -143,6 +105,9 @@ module CLI
         add_variable "POSTGRESQL_PASSWORD", pg_password, ".env.production"
 
         say ""
+        say "Configure access to Redis."
+        say ""
+
         sidekiq_url = ask_variable("REDIS_SIDEKIQ_URL")
         cache_url   = ask_variable("REDIS_CACHE_URL")
 

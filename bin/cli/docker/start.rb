@@ -13,7 +13,7 @@ module CLI
         run "#{compose} up --detach"
 
         if options[:setup]
-          run "#{compose} exec app bin/setup"
+          run "#{compose} exec app bin/setup project"
         elsif options[:update]
           run "#{compose} exec app bin/update"
         end

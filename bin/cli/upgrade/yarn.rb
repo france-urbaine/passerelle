@@ -20,7 +20,7 @@ module CLI
 
         say ""
         say "Updating assets"
-        run "bin/setup test assets"
+        run "bin/setup test --assets"
 
         say ""
         say "Would you like to run the system specs ? [Yn]"

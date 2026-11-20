@@ -3,9 +3,11 @@
 require_relative "../base"
 
 module CLI
-  class Setup
+  module Setup
     class User < Base
-      def call
+      def call(*)
+        parse_options!(*, arguments_expected: false)
+
         email, first_name, last_name = request_user_data_from_git
         email ||= request_user_email
 
@@ -47,8 +49,10 @@ module CLI
         end
 
         url = Rails.application.routes.url_helpers.user_registration_url(
-          host:  "http://localhost:3000",
-          token: user.confirmation_token
+          protocol: "http",
+          host:     "localhost",
+          port:     server_port,
+          token:    user.confirmation_token
         )
 
         say <<~MESSAGE
@@ -56,13 +60,32 @@ module CLI
 
               1. Start a server with the command:
 
-                  bin/dev
+                  #{bin_prefix('dev')}
 
               2. Then, follow the link below:
 
                   #{url}
           \x5
         MESSAGE
+      end
+
+      # Inside Docker, the server is published on the host port set by PORT
+      # in docker-compose (see HOST_PORT in docker-compose.dev.yml).
+      # Outside Docker, it's started on PORT (3000 by default, see bin/dev).
+      #
+      def server_port
+        ENV.fetch("HOST_PORT") { ENV.fetch("PORT", 3000) }
+      end
+
+      def help
+        say <<~HEREDOC
+          Usage:
+
+              #{bin_prefix('setup')} user
+
+          Create a new user (or update its password) through an interactive command.
+          \x5
+        HEREDOC
       end
 
       def request_user_data_from_git
