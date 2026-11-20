@@ -4,7 +4,7 @@
   "dependencies": {
     "@hotwired/stimulus": "^3.1.0",
     "@hotwired/turbo-rails": "^8.0.23",
-    "@rails/activestorage": "^8.1.300",
+    "@rails/activestorage": "^8.1.401",
     "@tailwindcss/postcss": "^4.3.3",
     "autoprefixer": "^10.6.2",
     "esbuild": "^0.28.2",
