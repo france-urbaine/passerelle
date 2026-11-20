@@ -1,0 +1,99 @@
+name: passerelle
+
+services:
+  app:
+    # Image build from Dockerfile.dev
+    # Use the CLI `bin/dx build --help` for more information
+    #
+    image: ${IMAGE_NAME:-passerelle:ruby-4.0}
+    init:  true
+    volumes:
+      - type: bind
+        source: "."
+        target: "/root/passerelle"
+
+      - history:/root/.history
+      - node_modules:/root/passerelle/node_modules
+
+    ports:
+      - "${PORT:-3000}:3000"
+      - "${MAILCATCHER_PORT:-1080}:1080"
+
+    environment:
+      TZ:               Europe/Paris
+      DOCKER:           true
+      HISTFILE:         /root/.history/.bash_history
+      IRB_HISTORY_FILE: /root/.history/.irb_history
+      PSQL_HISTORY:     /root/.history/.psql_history
+
+      POSTGRESQL_HOST:     postgres
+      POSTGRESQL_USER:     postgres
+      POSTGRESQL_PASSWORD: postgres
+
+      REDIS_SIDEKIQ_URL:   redis://redis:6379/0
+      REDIS_CACHE_URL:     redis://redis:6379/1
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    # Docker "Official Image" of PostgreSQL
+    # See https://hub.docker.com/_/postgres/
+    #
+    # Keep the major version in sync with postgresql-client in Dockerfile.dev
+    #
+    image:   postgres:18
+    restart: always
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - history:/root/.history
+
+    ports:
+      - "${PG_PORT:-5432}:5432"
+
+    environment:
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres
+
+      # `docker compose exec` runs as root (HOME=/root) in this image, not as
+      # the `postgres` user: psql history needs its own volume mount.
+      PSQL_HISTORY:      /root/.history/.psql_history
+
+    healthcheck:
+      test:     ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout:  5s
+      retries:  5
+
+  redis:
+    # Docker "Official Image" of Redis
+    # See https://hub.docker.com/_/redis/
+    #
+    image:   redis:7
+    restart: always
+
+    volumes:
+      - redis_data:/data
+
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+    healthcheck:
+      test:     ["CMD-SHELL", "redis-cli ping"]
+      interval: 10s
+      timeout:  5s
+      retries:  3
+
+volumes:
+  history:
+  node_modules:
+
+  postgres_data:
+    name: "${COMPOSE_PROJECT_NAME:-passerelle}-postgres"
+
+  redis_data:
+    name: "${COMPOSE_PROJECT_NAME:-passerelle}-redis"

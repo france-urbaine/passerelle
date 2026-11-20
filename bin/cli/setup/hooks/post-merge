@@ -1,3 +1,3 @@
 #!/bin/sh
 
-bin/update
+%<update_command>s

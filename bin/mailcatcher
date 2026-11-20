@@ -15,4 +15,8 @@ Dotenv.load(
 
 smtp_port = ENV.fetch("SMTP_PORT", 1025)
 
-system("mailcatcher --foreground --smtp-port #{smtp_port}")
+# Inside Docker, listen on all interfaces so the web interface
+# is reachable from the host through the published port.
+ip_option = " --ip 0.0.0.0" if ENV["DOCKER"]
+
+system("mailcatcher#{ip_option} --foreground --smtp-port #{smtp_port}")
