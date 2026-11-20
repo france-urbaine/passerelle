@@ -12,10 +12,7 @@ Rails.application.configure do
   # ViewComponent instrumentation could be very noisy, especially with Lookbook
   # That's why it isn't active by default.
   #
-  if ENV.fetch("INSTRUMENT_VIEW_COMPONENT", "false") == "true"
-    config.view_component.instrumentation_enabled = true
-    config.view_component.use_deprecated_instrumentation_name = false
-  end
+  config.view_component.instrumentation_enabled = true if ENV.fetch("INSTRUMENT_VIEW_COMPONENT", "false") == "true"
 
   config.lookbook.project_name = "Passerelle" if defined?(Lookbook)
 end
