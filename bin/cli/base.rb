@@ -1,11 +1,29 @@
 # frozen_string_literal: true
 
-require "irb/color"
-require "English"
+require_relative "../../lib/extras/lines_commander"
 require "optparse"
 
 module CLI
   class Base
+    include LinesCommander
+
+    # `bin/dx <name>` shortcuts that CLI::Base#bin_prefix can suggest instead of the
+    # fully spelled out `bin/dx exec bin/<name>` — see CLI::Docker::Default#call for the
+    # shortcuts themselves. Keyed on the exact string #bin_prefix builds before checking
+    # for a shortcut, i.e. "bin/dx exec bin/<name>" (or "bin/dx exec bin/<name> <extra>"
+    # for a two-word shortcut like `dev server`).
+    #
+    KNOWN_SHORTCUTS = {
+      "bin/dx exec bin/rails"      => "bin/dx rails",
+      "bin/dx exec bin/setup"      => "bin/dx setup",
+      "bin/dx exec bin/ci"         => "bin/dx ci",
+      "bin/dx exec bin/update"     => "bin/dx update",
+      "bin/dx exec bin/upgrade"    => "bin/dx upgrade",
+      "bin/dx exec bin/dev server" => "bin/dx dev server",
+      "bin/dx exec bin/dev jobs"   => "bin/dx dev jobs",
+      "bin/dx exec bin/dev"        => "bin/dx dev"
+    }.freeze
+
     def self.run
       call(*ARGV)
     end
@@ -16,70 +34,10 @@ module CLI
 
     private
 
-    def say(message)
-      if message.empty?
-        $stdout.puts output_prefix
-      else
-        lines = message.split("\n")
-        lines.each do |line|
-          $stdout.puts "#{output_prefix} #{line}"
-        end
-      end
-    end
-
-    def ask(message = nil, secret: false, loop_empty: false, end_say: "")
-      require "io/console" if secret
-
-      message = ask_message(message)
-
-      loop do
-        $stdout.print message
-        result = secret ? $stdin.getpass : $stdin.gets(chomp: true)
-
-        next if result.empty? && loop_empty
-
-        say(end_say) if end_say
-
-        return result
-      end
-    end
-
-    def ask_message(message)
-      if message.nil? || message.empty?
-        "#{output_prefix} > "
-      else
-        message.split("\n")
-          .map { |line| "#{output_prefix} #{line}" }
-          .join("\n")
-      end
-    end
-
-    def run(*args, env: {}, abort_on_failure: true)
-      args_splat = []
-      args_splat << env if env
-      args_splat += args
-
-      command = env.map { |k, v| "#{k}=#{v.inspect} " }.join
-      command += args.join(" ")
-
-      say colorize(command, :YELLOW)
-
-      result = system(*args_splat)
-
-      if result
-        result
-      else
-        say "#{colorize(command, :RED)} failed"
-        abort if abort_on_failure
-      end
-    end
-
-    def run_succeed?
-      $CHILD_STATUS&.success?
-    end
-
-    def run_failed?
-      $CHILD_STATUS && !$CHILD_STATUS.success?
+    # Suppress the "→ ClassName" suffix LinesCommander.program_name adds by default
+    #
+    def program_name
+      $PROGRAM_NAME
     end
 
     # An helper to parse command options.
@@ -102,56 +60,104 @@ module CLI
     #     end
     #   end
     #
-    # The options -h & --help are always available and call the #help method.
+    # When the command defines a #help method, the options -h & --help
+    # are available and call it.
     #
     # See https://docs.ruby-lang.org/en/4.0/OptionParser.html
     #
-    def parse_options!(*args, with: OptionParser.new, arguments_expected: true)
-      options = {}
-      parser  = with
+    def parse_options!(*args, with: OptionParser.new, arguments_expected: true, raise_unknown: true)
+      options     = {}
+      parser      = with
+      help_method = self.class.method_defined?(:help)
 
-      parser.on("-h", "--help") do
-        help
-        exit
+      parser.raise_unknown = raise_unknown
+
+      if help_method
+        parser.on("-h", "--help") do
+          help
+          exit
+        end
       end
 
       begin
         # Use #order! instead of #parse! so the parser breaks
         # when a non-switch argument is met.
         # Example:
-        #    bin/dx exec -s app bin/setup help
+        #    bin/dx exec -s app bin/setup project --mode empty
         #
         parser.order!(args, into: options)
 
-        return [args, options] if arguments_expected
-        return options if args.empty?
-
-        say colorize("unexpected argument: #{args.join(' ')}", :RED)
+        if arguments_expected
+          return [args, options]
+        elsif args.any?
+          unexpected_args!(args)
+        else
+          return options
+        end
       rescue OptionParser::ParseError => e
         say colorize(e.message, :RED)
+        say ""
       end
 
       # Using abort in the rescue block will output the exception message
       # to STDERR. So we use the begin..rescue syntax to avoid that.
-      say ""
-      help
+      help if help_method
       abort
     end
 
-    def command_available?(command)
-      system("command", "-v", command, out: File::NULL)
+    def unexpected_args!(args)
+      say colorize("unexpected argument: #{args.join(' ')}", :RED)
+      say ""
+
+      help if self.class.method_defined?(:help)
+      abort
     end
 
-    def program_name
-      $PROGRAM_NAME
+    def run_succeed?
+      $CHILD_STATUS&.success?
     end
 
-    def output_prefix
-      @output_prefix ||= colorize("[ #{program_name} ]", :BLUE)
+    def inside_docker_container?
+      !!ENV["DOCKER"]
     end
 
-    def colorize(message, color = nil)
-      IRB::Color.colorize(message, [color].compact)
+    # ENV["DX_EXEC"] is set by `bin/dx exec` (CLI::Docker::Exec) whenever it hands a
+    # command off to run inside a container — except `bin/dx exec bash` (`bin/dx sh`),
+    # which opens an interactive shell a human sits in, so anything typed there afterward
+    # should see itself as "already inside", not "launched from the host". Unlike
+    # ENV["DOCKER"] (true for ANY process inside the container — see CLI::Setup::Hooks for
+    # why it answers a different question), this is empty both when already inside an
+    # interactive shell and when running directly on the host with no Docker at all — both
+    # cases where the bare command is already correct.
+    #
+    def dx_exec_prefix
+      ENV["DX_EXEC"] ? "bin/dx exec " : ""
+    end
+
+    # Builds what a human should type to run `bin/<command>` from wherever this is
+    # printed: bare `bin/<command>` when already correct as-is (no DX_EXEC — see
+    # #dx_exec_prefix), `bin/dx <command>` when KNOWN_SHORTCUTS has a shorter form for
+    # it, or the fully spelled out `bin/dx exec bin/<command>` otherwise (e.g.
+    # `bin/rake`, which has no shortcut).
+    #
+    # `command` must be the bare name (e.g. "ci") — bin_prefix always builds the
+    # "bin/<command>" form itself, so passing "bin/ci" would double it up.
+    #
+    def bin_prefix(command = nil)
+      return "#{dx_exec_prefix}bin/#{command}" if command.nil?
+
+      command = command.delete_prefix("bin/")
+      command = "#{dx_exec_prefix}bin/#{command}"
+
+      replace_command_by_shortcut(command)
+    end
+
+    def replace_command_by_shortcut(command)
+      KNOWN_SHORTCUTS.each do |a, b|
+        return command.sub(/\A#{a}/, b) if command.start_with?(a)
+      end
+
+      command
     end
   end
 end

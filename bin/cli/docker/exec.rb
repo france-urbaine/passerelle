@@ -13,6 +13,7 @@ module CLI
         service = options.fetch(:service, "app")
 
         exec_options  = ""
+        exec_options += " --env DX_EXEC=true" unless command == "bash"
         exec_options += options[:env].split(",").map { " --env #{it}" }.join  if options[:env]
         exec_options += " --env DOTENV=#{options[:dotenv]}"                   if options[:dotenv]
         exec_options += " --env RAILS_ENV=#{options[:rails_env]}"             if options[:rails_env]
