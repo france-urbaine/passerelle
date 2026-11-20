@@ -146,6 +146,11 @@ RSpec.describe "Settings of current organization" do
       expect(page).to have_current_path("/organisation/parametres")
       expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
+      # Close the notification so the next one proves the second form was saved
+      #
+      click_on "Masquer cette notification"
+      expect(page).to have_no_selector("[role=log]")
+
       # Check box to authorized 2FA method
       #
       check "Autoriser l'email comme méthode d'authentification en 2 étapes"
@@ -279,6 +284,11 @@ RSpec.describe "Settings of current organization" do
       expect(page).to have_current_path("/organisation/parametres")
       expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
 
+      # Close the notification so the next one proves the second form was saved
+      #
+      click_on "Masquer cette notification"
+      expect(page).to have_no_selector("[role=log]")
+
       # Check box to authorized 2FA method
       #
       check "Autoriser l'email comme méthode d'authentification en 2 étapes"
@@ -405,6 +415,11 @@ RSpec.describe "Settings of current organization" do
       #
       expect(page).to have_current_path("/organisation/parametres")
       expect(page).to have_selector("[role=log]", text: "Les modifications ont été enregistrées avec succés.")
+
+      # Close the notification so the next one proves the second form was saved
+      #
+      click_on "Masquer cette notification"
+      expect(page).to have_no_selector("[role=log]")
 
       # Check box to authorized 2FA method
       #
