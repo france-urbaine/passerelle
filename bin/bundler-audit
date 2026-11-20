@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+system("bin/ci", "audit", *ARGV)
