@@ -157,20 +157,3 @@ module CLI
     end
   end
 end
-
-# Configure autoloading in this directory
-#
-# Zeitwerk is missing when gems are not installed on the host, for example
-# when running everything through Docker with `bin/dx`.
-# Commands which must run without gems require their dependencies explicitly.
-#
-begin
-  require "zeitwerk"
-rescue LoadError
-  return
-end
-
-loader = Zeitwerk::Loader.new
-loader.inflector.inflect("ci" => "CI")
-loader.push_dir(__dir__, namespace: CLI)
-loader.setup
