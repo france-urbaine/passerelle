@@ -15,8 +15,10 @@ Capybara.register_driver(:better_cuprite) do |app|
     window_size: [1280, 800],
     # See additional options for Dockerized environment in the respective section of this article
     browser_options: {},
-    # Increase Chrome startup wait time (required for stable CI builds)
-    process_timeout: 10,
+    # Increase Chrome startup & response wait times (required for stable CI builds)
+    # Ferrum defaults are 10s and 5s, which a cold Chrome on CI runners can exceed
+    process_timeout: 30,
+    timeout: 15,
     # Enable debugging capabilities
     inspector: true,
     # Allow running Chrome in a headful mode by setting HEADLESS env

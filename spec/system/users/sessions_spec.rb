@@ -68,11 +68,13 @@ RSpec.describe "Signing in" do
     expect(Users::Mailer).to have_sent_email
       .to(elise.email)
       .with_subject("Connexion à Passerelle")
-      .with_body(include(elise.current_otp))
+      .with_body(match(/\b\d{6}\b/))
 
-    # Fill the 2FA form
+    # Fill the 2FA form with the code received by email
+    # (don't recompute it: the OTP may have rotated since the email was sent)
     #
-    fill_in "Code de vérification", with: elise.current_otp
+    otp_code = ActionMailer::Base.deliveries.last.text_part.decoded[/\b\d{6}\b/]
+    fill_in "Code de vérification", with: otp_code
     click_on "Connexion"
 
     # The browser should log in & redirect to the dashboard
@@ -269,9 +271,12 @@ RSpec.describe "Signing in" do
       # The form should still require an OTP code
       # An error message is displayed
       #
+      # Wait for the field to be emptied: other assertions are already
+      # satisfied by the previous attempt and would not wait for the response.
+      #
+      expect(page).to have_field("Code de vérification", with: "")
       expect(page).to have_current_path(new_user_session_path)
       expect(page).to have_selector("h1", text: "Authentification en 2 facteurs")
-      expect(page).to have_field("Code de vérification")
       expect(page).to have_selector(".form-block__errors", text: "Code incorrect")
     end
 

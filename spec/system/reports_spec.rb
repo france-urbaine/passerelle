@@ -24,7 +24,9 @@ RSpec.describe "Reports" do
       expect(page).to have_selector(:table_row, { "État" => "accepté",   "Type de signalement" => "Évaluation d'un local professionnel", "Invariant" => "1020030272" })
       expect(page).to have_selector(:table_row, { "État" => "incomplet", "Type de signalement" => "Évaluation d'un local d'habitation" })
 
-      click_on "Évaluation d'un local d'habitation", match: :first
+      within :table_row, { "Référence" => report.reference } do
+        click_on "Évaluation d'un local d'habitation"
+      end
 
       # The browser should visit the report page
       #
@@ -516,7 +518,9 @@ RSpec.describe "Reports" do
       expect(page).to have_link("Évaluation d'un local d'habitation", count: 2)
       expect(page).to have_link("Évaluation d'un local professionnel", count: 1)
 
-      click_on "Évaluation d'un local d'habitation", match: :first
+      within :table_row, { "Référence" => report.reference } do
+        click_on "Évaluation d'un local d'habitation"
+      end
 
       # The browser should visit the report page
       #
@@ -724,7 +728,9 @@ RSpec.describe "Reports" do
       expect(page).to have_text("2 signalements | Page 1 sur 1")
       expect(page).to have_link("Évaluation d'un local d'habitation", count: 2)
 
-      click_on "Évaluation d'un local d'habitation", match: :first
+      within :table_row, { "Référence" => report.reference } do
+        click_on "Évaluation d'un local d'habitation"
+      end
 
       # The browser should visit the report page
       #
