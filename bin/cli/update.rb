@@ -4,42 +4,41 @@ require_relative "base"
 
 module CLI
   class Update < Base
-    def call(*arg)
-      arg.empty? ? check : help
-    end
+    def call(*)
+      parse_options!(*, arguments_expected: false)
 
-    def help
-      say <<~HEREDOC
-        Update commands:
-
-            bin/update          # Check for changes on dependencies, submodules and database
-
-        To add bin/update to your git hooks, run:
-
-            bin/setup githooks
-
-        If you want to upgrade dependencies, you should take look at:
-
-            bin/upgrade help
-        \x5
-      HEREDOC
-    end
-
-    def check
-      say "Verifying gem dependencies"
-      run "bundle check || bundle install"
-
-      say "Verifying JS packages"
-      run "yarn"
+      say "Verifying dependencies"
+      run "bin/setup dependencies"
 
       say "Verifying submodule"
-      run "git submodule init"
-      run "git submodule update"
+      run "bin/setup submodules"
 
       run "bin/setup env"
 
       say "Verifying database migration"
       run "QUICK_MIGRATION_UPDATE=true bin/rails db:migrate"
+
+      say ""
+      say "✓ Environment up to date !"
+      say ""
+    end
+
+    def help
+      say <<~HEREDOC
+        Usage:
+
+            #{bin_prefix('update')}
+
+        A command script to update dependencies, submodules and databases states.
+        To add bin/update to your git hooks, run:
+
+            #{bin_prefix('setup')} hooks
+
+        If you want to upgrade dependencies, you should take look at:
+
+            #{bin_prefix('upgrade')} --help
+        \x5
+      HEREDOC
     end
   end
 end
