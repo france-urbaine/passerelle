@@ -1,38 +1,44 @@
 # frozen_string_literal: true
 
-require_relative "command"
+require_relative "../base"
+require_relative "defaults"
 require "json"
 require "pathname"
 
 module CLI
-  class Docker
-    class Build < Command
+  module Docker
+    class Build < Base
       ROOT_PATH   = Pathname.new(__dir__).join("../../..")
       DOCKER_PATH = ROOT_PATH.join(".docker")
 
       def call(*)
         parse_options!(*, arguments_expected: false)
-        ensure_docker_installed
+        CLI::Docker.ensure_docker_installed
+
+        image_name   = CLI::Docker::IMAGE_NAME
+        project_name = CLI::Docker::PROJECT_NAME
 
         create_docker_folder
         create_bashrc_local
         create_irbrc_local
         create_docker_compose_local_env
 
-        say "Building Docker image #{IMAGE_NAME}"
-        run "docker build --file Dockerfile.dev --tag #{IMAGE_NAME} ."
+        say "Building Docker image #{image_name}"
+        run "docker build --file Dockerfile.dev --tag #{image_name} ."
 
-        save_variables(ENV_FILE, {
-          "IMAGE_NAME"           => IMAGE_NAME,
-          "COMPOSE_PROJECT_NAME" => PROJECT_NAME
+        save_variables(CLI::Docker::ENV_FILE, {
+          "IMAGE_NAME"           => image_name,
+          "COMPOSE_PROJECT_NAME" => project_name
         })
 
         say ""
-        say "✓ Docker image #{IMAGE_NAME} is ready"
+        say "✓ Docker image #{image_name} is ready"
         say ""
 
+        command_options = CLI::Docker.compose_command_options
+
         say "Build dependent images from docker-compose.dev.yml"
-        run "#{compose} up --no-start --no-recreate"
+        run "docker compose #{command_options.join(' ')} up --no-start --no-recreate"
 
         say ""
         say "✓ All dependent images are ready."
@@ -52,7 +58,7 @@ module CLI
           from docker-compose.dev.yml.
 
           The build process saves IMAGE_NAME & COMPOSE_PROJECT_NAME to
-          #{ENV_FILE} so other 'bin/dx' commands use them by default.
+          #{CLI::Docker::ENV_FILE} so other 'bin/dx' commands use them by default.
           \x5
         HEREDOC
       end
@@ -111,10 +117,11 @@ module CLI
       end
 
       def create_docker_compose_local_env
-        path = ROOT_PATH.join(LOCAL_ENV_FILE)
+        path = ROOT_PATH.join(CLI::Docker::LOCAL_ENV_FILE)
         return if path.exist?
 
-        say "Creating #{LOCAL_ENV_FILE}. You can set optional per-developer docker-compose variables inside"
+        say "Creating #{CLI::Docker::LOCAL_ENV_FILE}."
+        say "You can set optional per-developer docker-compose variables inside"
 
         path.write <<~ENV
           # Optional, untracked overrides for docker-compose.dev.yml variable substitution.
@@ -173,10 +180,10 @@ module CLI
       end
 
       def project_running?
-        result = `docker compose ls --format=json`
-        return false unless run_succeed?
+        result = run("docker compose ls --format=json", abort_on_failure: false, capture: true)
+        return false unless result
 
-        JSON.parse(result).any? { it["Name"] == PROJECT_NAME }
+        JSON.parse(result).any? { it["Name"] == CLI::Docker::PROJECT_NAME }
       end
     end
   end

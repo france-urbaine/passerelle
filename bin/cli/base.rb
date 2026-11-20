@@ -113,10 +113,6 @@ module CLI
       abort
     end
 
-    def run_succeed?
-      $CHILD_STATUS&.success?
-    end
-
     def inside_docker_container?
       !!ENV["DOCKER"]
     end

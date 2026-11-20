@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
-require_relative "command"
+require_relative "../base"
+require_relative "defaults"
 
 module CLI
-  class Docker
-    class Stop < Command
+  module Docker
+    class Stop < Base
       def call(*)
         parse_options!(*, arguments_expected: false)
-        ensure_docker_installed
+        CLI::Docker.ensure_docker_installed
+
+        command_options = CLI::Docker.compose_command_options
 
         say "Stopping development environment"
-        run "#{compose} stop"
+        run "docker compose #{command_options.join(' ')} stop"
 
         say "Development environment stopped"
       end
