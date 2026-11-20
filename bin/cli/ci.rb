@@ -48,11 +48,9 @@ module CLI
             bin/ci watch rubocop       # Watch and run only Rubocop
             bin/ci watch factories     # Watch and run only FactoryBot linter
 
-        To run tests in parallel, define the CI_PARALLEL environnment variable with one of the following values:
+        To run tests in parallel with parallel_tests, define the CI_PARALLEL environnment variable:
 
             CI_PARALLEL=true           # Use parallel_tests
-            CI_PARALLEL=turbo_tests    # Use turbo_tests (experimental, better output)
-            CI_PARALLEL=flatware       # Use flatware    (experimental, faster)
 
         To run the commands in CI environnement (ex: on Github), use the CI variable:
 

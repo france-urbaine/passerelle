@@ -83,14 +83,10 @@ module CLI
         say ""
         say "  [0] No (default)"
         say "  [1] Use parallel_tests"
-        say "  [2] Use turbo_tests       (experimental, better output)"
-        say "  [3] Use flatware          (experimental, faster)"
         say ""
 
         case ask
-        when "1" then add_variable "CI_PARALLEL", true,          ".env.test"
-        when "2" then add_variable "CI_PARALLEL", "turbo_tests", ".env.test"
-        when "3" then add_variable "CI_PARALLEL", "flatware",    ".env.test"
+        when "1" then add_variable "CI_PARALLEL", true, ".env.test"
         end
       end
 
