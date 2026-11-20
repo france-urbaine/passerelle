@@ -101,7 +101,10 @@ Naming/PredicateMethod:
 # Rails ------------------------------------------------------------------------
 Rails:
   Exclude:
+    # Following files are excluded from Rails cop.
+    # They might be call outside Rails ecosystem
     - 'bin/**/*'
+    - 'lib/extras/lines_commander.rb'
 
 Rails/ActionOrder:
   ExpectedOrder:
