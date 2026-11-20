@@ -7,6 +7,9 @@ marc:
   organization_admin: true
   email:              mdebomy@solutions-territoire.fr
   confirmed_at:       <%= Time.current %>
+  # Marc must come first in implicit order: he cannot discard himself
+  # and paginated specs expect him on the first page
+  created_at:         <%= 1.minute.ago %>
 
 elise:
   organization:       solutions_territoire (Publisher)
