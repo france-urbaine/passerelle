@@ -49,8 +49,10 @@ module CLI
         end
 
         url = Rails.application.routes.url_helpers.user_registration_url(
-          host:  "http://localhost:3000",
-          token: user.confirmation_token
+          protocol: "http",
+          host:     "localhost",
+          port:     server_port,
+          token:    user.confirmation_token
         )
 
         say <<~MESSAGE
@@ -65,6 +67,14 @@ module CLI
                   #{url}
           \x5
         MESSAGE
+      end
+
+      # Inside Docker, the server is published on the host port set by PORT
+      # in docker-compose (see HOST_PORT in docker-compose.dev.yml).
+      # Outside Docker, it's started on PORT (3000 by default, see bin/dev).
+      #
+      def server_port
+        ENV.fetch("HOST_PORT") { ENV.fetch("PORT", 3000) }
       end
 
       def help

@@ -26,6 +26,10 @@ services:
       IRB_HISTORY_FILE: /root/.history/.irb_history
       PSQL_HISTORY:     /root/.history/.psql_history
 
+      # Host port the Rails server is published on (see ports above),
+      # used to print links reachable from the host (e.g. `bin/setup user`)
+      HOST_PORT: ${PORT:-3000}
+
       POSTGRESQL_HOST:     postgres
       POSTGRESQL_USER:     postgres
       POSTGRESQL_PASSWORD: postgres
