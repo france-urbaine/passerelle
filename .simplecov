@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-SimpleCov.start "rails" do
+SimpleCov.configure do
+  load_profile "rails"
+
   # When runnning `bin/ci` unit tests and system tests are ran in two separate processes.
   # To merge both coverage results, we need to setup a custom command:
   #
@@ -9,7 +11,7 @@ SimpleCov.start "rails" do
     command_name ENV.values_at("SIMPLE_COV_COMMAND", "TEST_ENV_NUMBER").join("-") if ENV["TEST_ENV_NUMBER"]
   end
 
-  add_group "Components", "app/components"
-  add_group "Policies", "app/policies"
-  add_group "Services", "app/services"
+  group "Components", "app/components"
+  group "Policies", "app/policies"
+  group "Services", "app/services"
 end
