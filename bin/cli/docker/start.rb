@@ -1,21 +1,24 @@
 # frozen_string_literal: true
 
-require_relative "command"
+require_relative "../base"
+require_relative "defaults"
 
 module CLI
-  class Docker
-    class Start < Command
+  module Docker
+    class Start < Base
       def call(*)
         options = parse_options!(*, with: options_parser, arguments_expected: false)
-        ensure_docker_installed
+        CLI::Docker.ensure_docker_installed
+
+        command_options = CLI::Docker.compose_command_options
 
         say "Starting development environment"
-        run "#{compose} up --detach"
+        run "docker compose #{command_options.join(' ')} up --detach"
 
         if options[:setup]
-          run "#{compose} exec app bin/setup project"
+          run "docker compose #{command_options.join(' ')} exec app bin/setup project"
         elsif options[:update]
-          run "#{compose} exec app bin/update"
+          run "docker compose #{command_options.join(' ')} exec app bin/update"
         end
 
         say "Development environment started"
