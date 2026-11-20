@@ -99,8 +99,11 @@ Rails.application.configure do
   # Redirect localhost:3000 to appropriate domain set in config.x.domain
   # (DOMAIN_APP or `passerelle-fiscale.localhost` by default)
   #
+  # The rails-hyperdrive MCP server is excluded: MCP clients don't follow
+  # redirects and expect it on localhost (see .mcp.json).
+  #
   config.middleware.insert_before Rack::Runtime, Rack::Rewrite do
-    r303(/(.*)/, lambda { |match, rack_env|
+    r303(%r{\A(?!/_hyperdrive)(.*)}, lambda { |match, rack_env|
       port = rack_env["SERVER_PORT"]
       path = match.to_s
       "http://#{Rails.application.config.x.domain}:#{port}#{path}"

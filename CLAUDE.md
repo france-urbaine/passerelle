@@ -106,4 +106,21 @@ creating the branch. If the team/theme isn't obvious, ask.
 - Mailers: http://localhost:3000/rails/mailers
 - Subdomains in dev: http://passerelle-fiscale.localhost:3000
 
+## AI tooling (rails-hyperdrive)
+
+- `rails-hyperdrive` mounts an MCP server at `/_hyperdrive/mcp` in development
+  only, declared in `.mcp.json`. It is available while `bin/dx dev` runs and
+  offers live introspection (`run_ruby`, read-only `run_sql`, `list_routes`,
+  `list_models`, `locate_source`, `tail_logs`…): prefer it over grepping
+  `routes.rb` or replaying migrations when the server is up.
+- The URL uses `${PASSERELLE_PORT:-3000}`: developers who publish Rails on
+  another host port (`PORT` in `.docker/docker-compose.local.env`) export
+  `PASSERELLE_PORT` in their shell before starting Claude Code.
+- Companion content (the `layered-rails` skill, agents and `/layered-rails-*`
+  commands from `layered-rails-skills`) lives in `.claude/` and is tracked in
+  `.hyperdrive/lock.yml`. Don't edit those files casually: after adding or
+  upgrading a companion gem, run `bin/dx rails hyperdrive:sync`. The
+  `bundler-hyperdrive` Gemfile plugin is deliberately not registered, so it
+  doesn't install in CI and production.
+
 Deployment (tag + push to CleverCloud) is described in `DEPLOY.md`; never push to the `production` remote unasked.
