@@ -10,11 +10,9 @@
     @apply dark:bg-black dark:ring-gray-700;
   }
 
-  .table__row {
-    &--selected {
-      @apply bg-blue-50;
-      @apply dark:bg-blue-900/50;
-    }
+  .table__row--selected {
+    @apply bg-blue-50;
+    @apply dark:bg-blue-900/50;
   }
 
   .table__cell {
@@ -22,18 +20,18 @@
       content: "-";
       @apply text-gray-500;
     }
+  }
 
-    &--compact {
-      @apply w-px;
-    }
+  .table__cell--compact {
+    @apply w-px;
+  }
 
-    &--right {
-      text-align: right;
-    }
+  .table__cell--right {
+    text-align: right;
+  }
 
-    &--right:not(&--compact) {
-      @apply w-1 pl-12;
-    }
+  .table__cell--right:not(.table__cell--compact) {
+    @apply w-1 pl-12;
   }
 
   .table__checkbox,

@@ -29,11 +29,11 @@
       content: "-";
       @apply text-gray-500;
     }
+  }
 
-    &--selected {
-      @apply bg-blue-50;
-      @apply dark:bg-blue-900/50;
-    }
+  .datatable__row--selected {
+    @apply bg-blue-50;
+    @apply dark:bg-blue-900/50;
   }
 
   .datatable__order-button {
