@@ -269,9 +269,12 @@ RSpec.describe "Signing in" do
       # The form should still require an OTP code
       # An error message is displayed
       #
+      # Wait for the field to be emptied: other assertions are already
+      # satisfied by the previous attempt and would not wait for the response.
+      #
+      expect(page).to have_field("Code de vérification", with: "")
       expect(page).to have_current_path(new_user_session_path)
       expect(page).to have_selector("h1", text: "Authentification en 2 facteurs")
-      expect(page).to have_field("Code de vérification")
       expect(page).to have_selector(".form-block__errors", text: "Code incorrect")
     end
 
