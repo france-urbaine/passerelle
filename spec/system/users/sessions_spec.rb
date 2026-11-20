@@ -68,11 +68,13 @@ RSpec.describe "Signing in" do
     expect(Users::Mailer).to have_sent_email
       .to(elise.email)
       .with_subject("Connexion à Passerelle")
-      .with_body(include(elise.current_otp))
+      .with_body(match(/\b\d{6}\b/))
 
-    # Fill the 2FA form
+    # Fill the 2FA form with the code received by email
+    # (don't recompute it: the OTP may have rotated since the email was sent)
     #
-    fill_in "Code de vérification", with: elise.current_otp
+    otp_code = ActionMailer::Base.deliveries.last.text_part.decoded[/\b\d{6}\b/]
+    fill_in "Code de vérification", with: otp_code
     click_on "Connexion"
 
     # The browser should log in & redirect to the dashboard
