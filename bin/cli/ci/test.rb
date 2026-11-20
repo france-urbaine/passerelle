@@ -3,18 +3,50 @@
 require_relative "../base"
 
 module CLI
-  class CI
+  module CI
     class Test < Base
       def call(*args)
-        say "Clear previous coverage results"
-        run "rm -rf coverage/.resultset.json"
-        say ""
+        args, options = parse_options!(*args, with: options_parser, arguments_expected: true)
+
+        unless options[:"keep-coverage"]
+          say "Clear previous coverage results"
+          run "rm -rf coverage/.resultset.json"
+          say ""
+        end
 
         if args.empty?
           run_tests(:unit)
           run_tests(:system)
         else
           run_tests(*args)
+        end
+      end
+
+      def help
+        say <<~HEREDOC
+          Usage:
+
+              #{bin_prefix('ci')} test [OPTIONS] [SCOPE|PATH]
+
+          The command accepts a path (a *_spec.rb file) or one of the following scope:
+
+              #{bin_prefix('ci')} test unit            Run unit tests (exclude system tests)
+              #{bin_prefix('ci')} test system          Run system tests
+              #{bin_prefix('ci')} test requests        Run requests tests
+              #{bin_prefix('ci')} test components      Run components tests
+              #{bin_prefix('ci')} test failed          Run only failed tests from previous run
+
+          Options:
+
+              --keep-coverage             Keep coverage results from previous runs and merge them
+                                          into the report (used by `#{bin_prefix('ci')}` to sum up all scopes)
+          \x5
+        HEREDOC
+      end
+
+      def options_parser
+        OptionParser.new do |parser|
+          parser.on("--keep-coverage")
         end
       end
 
@@ -26,7 +58,10 @@ module CLI
 
           env     = build_env(scope)
           command = build_command(scope, paths)
-          return if run(command, env: env, abort_on_failure: false)
+          result  = run(command, env: env, abort_on_failure: false)
+          return if result
+
+          abort unless enable_retry?
 
           say "Cleanup database before retrying failed specs"
           run "bin/setup test #{parallel_mode ? '--parallel' : '--rspec'}"
@@ -43,9 +78,9 @@ module CLI
 
       SCOPES = {
         "unit"       => [],
-        "system"     => [],
-        "components" => %w[spec/components],
-        "requests"   => %w[spec/requests]
+        "system"     => %w[spec/system],
+        "requests"   => %w[spec/requests],
+        "components" => %w[spec/components]
       }.freeze
 
       def parse_arguments(*args)
@@ -89,9 +124,9 @@ module CLI
         env
       end
 
-      # I cannot make it simpler
       # rubocop:disable Metrics/CyclomaticComplexity
       # rubocop:disable Metrics/PerceivedComplexity
+      # I cannot make it simpler
       #
       def build_command(scope, paths, only_failures: false)
         if parallel_mode
@@ -101,18 +136,20 @@ module CLI
 
         @parallel_mode = nil if node_total == 1
 
-        if parallel_mode && !only_failures
+        if parallel_mode == "parallel_rspec"
+          rspec_options = []
+          rspec_options += ["-f progress", "-f RSpec::Github::Formatter"] if ENV["CI"] == "true"
+          rspec_options << "--only-failures" if only_failures
+
           command  = "bundle exec parallel_rspec"
-          command += " -n #{node_total}"                                                  if node_total
-          command += " --only-group #{node_index}"                                        if node_index
-          command += " --exclude-pattern spec/system"                                     if scope == "unit"
-          command += " --pattern spec/system"                                             if scope == "system"
-          command += " -- -f progress -f RSpec::Github::Formatter --"                     if ENV["CI"] == "true"
+          command += " -n #{node_total}"                if node_total
+          command += " --only-group #{node_index}"      if node_index
+          command += " --exclude-pattern spec/system"   if scope == "unit"
+          command += " -- #{rspec_options.join(' ')} --" if rspec_options.any?
 
         else
           command  = "bundle exec rspec"
           command += " --exclude-pattern 'system/**/*_spec.rb'"                           if scope == "unit"
-          command += " --pattern 'system/**/*_spec.rb'"                                   if scope == "system"
           command += " --no-profile --format RSpec::Github::Formatter --format progress"  if ENV["CI"] == "true"
           command += " --only-failures"                                                   if only_failures
         end
@@ -141,6 +178,10 @@ module CLI
           end
 
         @parallel_mode = runner
+      end
+
+      def enable_retry?
+        ENV.fetch("CI_ENABLE_RETRY", "false") == "true"
       end
 
       def determine_number_of_parallel_processes(scope)

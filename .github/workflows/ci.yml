@@ -49,10 +49,11 @@ jobs:
       fail-fast: true
       matrix:
         # Set N number of parallel jobs to run
-        # Remember to update ci_node_index below to 0..N-1
+        # Remember to update ci_node_index below to 1..N
+        # (parallel_tests --only-group starts counting groups at 1)
         #
         ci_node_total: [4]
-        ci_node_index: ["0,1", "2,3"]
+        ci_node_index: ["1,2", "3,4"]
 
     services:
       # Setup a postgres database to run tests
