@@ -18,7 +18,7 @@ RSpec.describe UI::Logs::Component do
   end
 
   it "renders logs in a given time zone" do
-    render_inline described_class.new(time_zone: "CET") do |logs|
+    render_inline described_class.new(time_zone: "Europe/Paris") do |logs|
       logs.with_log Time.utc(2023, 11, 23, 12, 1), "Log #1"
       logs.with_log Time.utc(2023, 11, 23, 12, 2), "Log #2"
       logs.with_log Time.utc(2023, 11, 23, 12, 3), "Log #3"
