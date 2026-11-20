@@ -3,9 +3,11 @@
 require_relative "../base"
 
 module CLI
-  class Setup
+  module Setup
     class Territories < Base
-      def call
+      def call(*)
+        parse_options!(*, arguments_expected: false)
+
         say "Setup territories"
         say "Loading environment"
         require_relative "../../../config/environment"
@@ -30,6 +32,17 @@ module CLI
         say ""
         say "✓ Import completed"
         say ""
+      end
+
+      def help
+        say <<~HEREDOC
+          Usage:
+
+              #{bin_prefix('setup')} territories
+
+          Import all EPCIs and communes from a remote source.
+          \x5
+        HEREDOC
       end
     end
   end
