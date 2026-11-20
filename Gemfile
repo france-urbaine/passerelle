@@ -74,7 +74,7 @@ gem "rack-attack"
 gem "rack-rewrite"
 
 # Windows compatibility
-gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
+gem "tzinfo-data", platforms: %i[windows jruby]
 
 gem "audited"
 
@@ -85,7 +85,7 @@ group :development, :test do
   gem "amazing_print"
   gem "byebug"
   gem "dead_end"
-  gem "debug", platforms: %i[mri mingw x64_mingw]
+  gem "debug", platforms: %i[mri windows]
   gem "dotenv"
 
   # Test frameworks
