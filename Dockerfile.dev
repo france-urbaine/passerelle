@@ -3,7 +3,7 @@
 #
 # This base image uses debian:bookworm (aka 12.x)
 #
-FROM docker.io/library/ruby:4.0.9-bookworm
+FROM docker.io/library/ruby:4.0.10-bookworm
 
 # Retrieve new lists of packages
 #

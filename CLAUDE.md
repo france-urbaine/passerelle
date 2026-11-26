@@ -1,6 +1,6 @@
 # Passerelle
 
-Rails 8.1 app (Ruby 4.0.9) through which collectivities and publishers transmit
+Rails 8.1 app (Ruby 4.0.10) through which collectivities and publishers transmit
 tax reports ("signalements") to the DDFIP/DGFIP, who then accept, assign,
 resolve and confirm them. The UI, URLs, locales and domain vocabulary are
 French (`config.i18n.default_locale = :fr`, the only available locale).

@@ -30,7 +30,7 @@ jobs:
     - name: Set up Ruby, install & cache Gems
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 4.0.9
+        ruby-version: 4.0.10
         bundler-cache: true
 
     - name: Set up & cache Yarn
@@ -79,7 +79,7 @@ jobs:
     - name: Set up Ruby from cache
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 4.0.9
+        ruby-version: 4.0.10
         bundler-cache: true
 
     - name: Set up Yarn from cache
@@ -151,7 +151,7 @@ jobs:
     - name: Set up Ruby from cache
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 4.0.9
+        ruby-version: 4.0.10
         bundler-cache: true
 
     - name: Set up Yarn from cache
@@ -208,7 +208,7 @@ jobs:
     - name: Set up Ruby from cache
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 4.0.9
+        ruby-version: 4.0.10
         bundler-cache: true
 
     - name: Run rubocop
@@ -224,7 +224,7 @@ jobs:
     - name: Set up Ruby from cache
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 4.0.9
+        ruby-version: 4.0.10
         bundler-cache: true
 
     - name: Run brakeman
@@ -240,7 +240,7 @@ jobs:
     - name: Set up Ruby from cache
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 4.0.9
+        ruby-version: 4.0.10
         bundler-cache: true
 
     - name: Run audit
